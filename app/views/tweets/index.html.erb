@@ -1,0 +1,14 @@
+<% if @classification %>
+  <% if @classification == Tweet::Classification::SULEMIO %>
+    <h1 class="mt-4 mb-3">スレミオの絵</h1>
+    <!-- <p class="lead">スレミオ判別済みの絵</p> -->
+  <% else %>
+    <h1 class="mt-4 mb-3">スレミオ以外の絵</h1>
+  <% end %>
+<% else %>
+  <h1 class="mt-4 mb-3">未分類の絵</h1>
+<% end %>
+
+<div id="users" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-5">
+  <%= render @tweets %>
+</div>

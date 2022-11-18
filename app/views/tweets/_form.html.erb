@@ -1,0 +1,52 @@
+<%= form_with(model: tweet) do |form| %>
+  <% if tweet.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(tweet.errors.count, "error") %> prohibited this tweet from being saved:</h2>
+
+      <ul>
+        <% tweet.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :t_id, style: "display: block" %>
+    <%= form.text_field :t_id %>
+  </div>
+
+  <div>
+    <%= form.label :body, style: "display: block" %>
+    <%= form.text_area :body %>
+  </div>
+
+  <div>
+    <%= form.label :url, style: "display: block" %>
+    <%= form.text_field :url %>
+  </div>
+
+  <div>
+    <%= form.label :raw_json, style: "display: block" %>
+    <%= form.text_area :raw_json %>
+  </div>
+
+  <div>
+    <%= form.label :type, style: "display: block" %>
+    <%= form.text_field :type %>
+  </div>
+
+  <div>
+    <%= form.label :classification, style: "display: block" %>
+    <%= form.text_field :classification %>
+  </div>
+
+  <div>
+    <%= form.label :classified, style: "display: block" %>
+    <%= form.check_box :classified %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

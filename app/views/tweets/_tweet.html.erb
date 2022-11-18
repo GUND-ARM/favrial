@@ -1,0 +1,18 @@
+<div class="col">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <blockquote class="twitter-tweet">
+        <%= link_to tweet.t_id, tweet.url %>
+      </blockquote>
+      <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      <%= form_with(model: tweet, class: "d-grid gap-2") do |form| %>
+        <%= form.button :classification, value: "sulemio", class: "btn btn-primary" do %>
+         &#x1f99d;&#x1f345;&nbsp;スレミオである
+        <% end %>
+        <%= form.button :classification, value: "other", class: "btn btn-secondary" do %>
+          スレミオでない
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

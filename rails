@@ -1,0 +1,3 @@
+#!/bin/sh
+
+SECRET_KEY_BASE=$(cat secret.txt) ./docker_compose run --rm web rails $@
