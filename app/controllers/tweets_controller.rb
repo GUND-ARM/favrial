@@ -3,10 +3,13 @@ class TweetsController < ApplicationController
 
   # GET /tweets or /tweets.json
   def index
+    limit = 6
     if @classification = params[:classification]
-      @tweets = Tweet.where(classified: true, classification: @classification).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).limit(10)
+      @tweets = Tweet.where(classified: true, classification: @classification).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).limit(limit)
+      @count = Tweet.where(classified: true, classification: @classification).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).count
     else
-      @tweets = Tweet.where(classified: false).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).limit(10)
+      @tweets = Tweet.where(classified: false).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).limit(limit)
+      @count = Tweet.where(classified: false).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).count
     end
   end
 
