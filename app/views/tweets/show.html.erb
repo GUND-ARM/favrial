@@ -1,12 +1,26 @@
 <p style="color: green"><%= notice %></p>
 
-<%= render @tweet %>
+<div class="mb-3">
+    <blockquote class="twitter-tweet">
+      <%= link_to @tweet.t_id, @tweet.url %>
+    </blockquote>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<!--<div>
-  <%= link_to "Edit this tweet", edit_tweet_path(@tweet) %> |
-  <%= link_to "Back to tweets", tweets_path %>
+    <% if @tweet.is_slemio? %>
+      <p>このツィートは<strong>スレミオ</strong>だ。私がそう判断した</p>
+    <% elsif @tweet.is_suletta? %>
+      <p>このツィートは<strong>スレッタ</strong>だ。私がそう判断した</p>
+    <% elsif @tweet.is_miorine? %>
+      <p>このツィートは<strong>ミオリネ</strong>だ。私がそう判断した</p>
+    <% else %>
+      <p>このツィートはスレミオ/スレッタ/ミオリネの<strong>いずれでもない。</strong>私がそう判断した</p>
+    <% end %>
 
-  <%= button_to "Destroy this tweet", @tweet, method: :delete %>
-</div>-->
-
-<%= link_to "一覧に戻る", tweets_path, class: "btn btn-primary mt-4"%>
+    <%= link_to "編集", edit_tweet_path(@tweet), class: "btn btn-secondary" %>
+</div>
+<div>
+  <hr>
+</div>
+<div class="mb-3">
+    <%= link_to "一覧に戻る", tweets_path, class: "btn btn-primary"%>
+</div>

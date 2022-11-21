@@ -8,8 +8,8 @@ class Tweet < ApplicationRecord
   # スレミオ分類
   module Classification
     [
-      #:SULETTA,  # スレッタ単体
-      #:MIORINE,  # ミオリネ単体
+      :SULETTA,  # スレッタ単体
+      :MIORINE,  # ミオリネ単体
       :SULEMIO,  # スレミオ
       :OTHER     # それ以外
       #:WITHHOLD, # 判断を保留する（心がふたつあるんじゃ）
@@ -47,10 +47,23 @@ class Tweet < ApplicationRecord
   attribute :classified, default: false
 
   before_save do
-    self.classified = classification == Classification::SULEMIO ||
-                      classification == Classification::OTHER
+    if classification
+      self.classified = true
+    end
 
     self.url ||= "https://twitter.com/_/status/#{t_id}"
+  end
+
+  def is_slemio?
+    classification == Classification::SULEMIO
+  end
+
+  def is_miorine?
+    classification == Classification::MIORINE
+  end
+
+  def is_suletta?
+    classification == Classification::SULETTA
   end
 
   def self.fetch_timeline

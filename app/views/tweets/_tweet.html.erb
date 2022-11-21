@@ -4,13 +4,26 @@
       <blockquote class="twitter-tweet">
         <%= link_to tweet.t_id, tweet.url %>
       </blockquote>
-      <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-      <%= form_with(model: tweet, class: "d-grid gap-2") do |form| %>
-        <%= form.button :classification, value: "sulemio", class: "btn btn-primary" do %>
-         &#x1f99d;&#x1f345;&nbsp;スレミオである
+      <%= form_with(model: tweet, class: "d-flex gap-2") do |form| %>
+        <%= form.button :classification,
+          value: Tweet::Classification::SULEMIO,
+          class: "btn btn-primary w-100" do %>
+         スレミオ
         <% end %>
-        <%= form.button :classification, value: "other", class: "btn btn-secondary" do %>
-          スレミオでない
+        <%= form.button :classification,
+          value: Tweet::Classification::SULETTA,
+          class: "btn btn-danger w-100" do %>
+         スレッタ
+        <% end %>
+        <%= form.button :classification,
+          value: Tweet::Classification::MIORINE,
+          class: "btn btn-success w-100" do %>
+         ミオリネ
+        <% end %>
+        <%= form.button :classification,
+          value: Tweet::Classification::OTHER,
+          class: "btn btn-secondary w-100" do %>
+          他
         <% end %>
       <% end %>
     </div>
