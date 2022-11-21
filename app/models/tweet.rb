@@ -5,14 +5,41 @@ class Tweet < ApplicationRecord
   #   p Tweet::Classification.const_get(k)
   # end
   #
+  # スレミオ分類
   module Classification
-    SULEMIO = 'sulemio'.freeze
-    OTHER = 'other'.freeze
+    [
+      #:SULETTA,  # スレッタ単体
+      #:MIORINE,  # ミオリネ単体
+      :SULEMIO,  # スレミオ
+      :OTHER     # それ以外
+      #:WITHHOLD, # 判断を保留する（心がふたつあるんじゃ）
+    ].each do |k|
+      Classification.const_set(k, k.to_s.downcase.freeze)
+    end
   end
 
+  # 表現されているものの種類
+  module ContentType
+    module Photo
+      [
+        :ILLUSTRATION, # イラスト（マンガではない絵）
+        :MANGA,        # マンガ
+        :NOVEL,        # 画像化された小説
+        :OTHER         # 本編キャプチャによる萌え語り, フィギュアやプラモの撮影など？
+      ].each do |k|
+        Photo.const_set(k, k.to_s.downcase.freeze)
+      end
+    end
+  end
+
+  # メディアタイプ（画像つきのツィートかどうか）
   module MediaType
-    PHOTO = 'photo'.freeze
-    OTHER = 'other'.freeze
+    [
+      :PHOTO,   # 画像つきツィート
+      :OTHER    # その他のツィート
+    ].each do |k|
+      MediaType.const_set(k, k.to_s.downcase.freeze)
+    end
   end
 
   validates :t_id, uniqueness: true
@@ -141,11 +168,11 @@ class Tweet < ApplicationRecord
       t_id = hash['id']
       text = hash['text']
     end
-    if hash['type'] == 'photo'
-      type = Tweet::MediaType::PHOTO
-    else
-      type = Tweet::MediaType::OTHER
-    end
+    type = if hash['type'] == 'photo'
+             Tweet::MediaType::PHOTO
+           else
+             Tweet::MediaType::OTHER
+           end
     Tweet.find_or_create_by(t_id: t_id) do |t|
       t.body = text
       t.raw_json = hash.to_json
