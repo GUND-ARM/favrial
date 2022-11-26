@@ -11,10 +11,12 @@
 
 <p><%= @count %> のツィート</p>
 
-<%= turbo_frame_tag("tweets-list") do %>
-  <div id="tweets" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-5">
-    <% @tweets.each do |tweet| %>
-      <%= render tweet %>
-    <% end %>
-  </div>
+<%= turbo_frame_tag "page_handler" %>
+<div id="tweets" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-5" data-controller="hello">
+  <% @tweets.each do |tweet| %>
+    <%= render tweet %>
+  <% end %>
+</div>
+<%= turbo_frame_tag("next_page_button") do %>
+  <%= link_to "もっと！", path_to_next_page(@tweets), class: "btn btn-primary", data: { turbo_frame: "page_handler" } %>
 <% end %>

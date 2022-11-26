@@ -1,14 +1,14 @@
 class TweetsController < ApplicationController
   before_action :set_tweet, only: %i[ show edit update destroy ]
+  before_action :turbo_frame_request_variant, only: %i[ index ]
 
   # GET /tweets or /tweets.json
   def index
-    limit = 6
     if @classification = params[:classification]
-      @tweets = Tweet.classified_with_photo(@classification).limit(limit)
+      @tweets = Tweet.classified_with_photo(@classification).page(params[:page])
       @count = Tweet.classified_with_photo(@classification).count
     else
-      @tweets = Tweet.unclassified_with_photo.limit(limit)
+      @tweets = Tweet.unclassified_with_photo.page(params[:page])
       @count = Tweet.unclassified_with_photo.count
     end
   end
@@ -74,5 +74,9 @@ class TweetsController < ApplicationController
     def tweet_params
       #params.require(:tweet).permit(:t_id, :body, :url, :raw_json, :type, :classification, :classified)
       params.require(:tweet).permit(:classification)
+    end
+
+    def turbo_frame_request_variant
+      request.variant = :turbo_frame if turbo_frame_request?
     end
 end
