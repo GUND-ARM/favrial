@@ -95,7 +95,7 @@ class Tweet < ApplicationRecord
     classification == Classification::SULETTA
   end
 
-  def self.fetch_timeline
+  def self.fetch_timeline(fetch_count=1)
     token = Credential.order(created_at: :desc).first.token
 
     res = Tweet.api_access(token, '/2/users/me')
@@ -106,7 +106,7 @@ class Tweet < ApplicationRecord
     end
 
     pagination_token = nil
-    5.times do
+    fetch_count.times do
       pagination_token = Tweet.fetch_timeline_once(token, user_id, pagination_token)
       break unless pagination_token 
     end
