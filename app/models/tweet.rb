@@ -83,15 +83,15 @@ class Tweet < ApplicationRecord
     self.url ||= "https://twitter.com/_/status/#{t_id}"
   end
 
-  def is_slemio?
+  def slemio?
     classification == Classification::SULEMIO
   end
 
-  def is_miorine?
+  def miorine?
     classification == Classification::MIORINE
   end
 
-  def is_suletta?
+  def suletta?
     classification == Classification::SULETTA
   end
 

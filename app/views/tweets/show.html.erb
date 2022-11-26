@@ -1,26 +1,12 @@
 <p style="color: green"><%= notice %></p>
 
 <div class="mb-3">
-    <blockquote class="twitter-tweet">
-      <%= link_to @tweet.t_id, @tweet.url %>
-    </blockquote>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-    <% if @tweet.is_slemio? %>
-      <p>このツィートは<strong>スレミオ</strong>だ。私がそう判断した</p>
-    <% elsif @tweet.is_suletta? %>
-      <p>このツィートは<strong>スレッタ</strong>だ。私がそう判断した</p>
-    <% elsif @tweet.is_miorine? %>
-      <p>このツィートは<strong>ミオリネ</strong>だ。私がそう判断した</p>
-    <% else %>
-      <p>このツィートはスレミオ/スレッタ/ミオリネの<strong>いずれでもない。</strong>私がそう判断した</p>
-    <% end %>
-
-    <%= link_to "編集", edit_tweet_path(@tweet), class: "btn btn-secondary" %>
+  <%= render @tweet %>
 </div>
 <div>
+  <%= link_to "編集", edit_tweet_path(@tweet), class: "btn btn-secondary" %>
   <hr>
 </div>
 <div class="mb-3">
-    <%= link_to "一覧に戻る", tweets_path, class: "btn btn-primary"%>
+  <%= link_to "一覧に戻る", tweets_path, class: "btn btn-primary"%>
 </div>

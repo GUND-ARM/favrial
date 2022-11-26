@@ -1,31 +1,57 @@
-<div class="col">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <blockquote class="twitter-tweet">
-        <%= link_to tweet.t_id, tweet.url %>
-      </blockquote>
-      <%= form_with(model: tweet, class: "d-flex gap-2") do |form| %>
-        <%= form.button :classification,
-          value: Tweet::Classification::SULEMIO,
-          class: "btn btn-primary w-100" do %>
-         スレミオ
-        <% end %>
-        <%= form.button :classification,
-          value: Tweet::Classification::SULETTA,
-          class: "btn btn-danger w-100" do %>
-         スレッタ
-        <% end %>
-        <%= form.button :classification,
-          value: Tweet::Classification::MIORINE,
-          class: "btn btn-success w-100" do %>
-         ミオリネ
-        <% end %>
-        <%= form.button :classification,
-          value: Tweet::Classification::OTHER,
-          class: "btn btn-secondary w-100" do %>
-          他
-        <% end %>
-      <% end %>
+<%= turbo_frame_tag(tweet) do %>
+  <div class="col">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <!--<div class="d-flex align-items-center h-100">-->
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <blockquote class="twitter-tweet" data-conversation="none">
+                <%= link_to tweet.t_id, tweet.url %>
+              </blockquote>
+            </div>
+          </div>
+          <div class="row align-items-end">
+            <div class="col">
+              <% if tweet.classification %>
+                <% if tweet.slemio? %>
+                  <p>このツィートは<strong>スレミオ</strong>だ。私がそう判断した</p>
+                <% elsif tweet.suletta? %>
+                  <p>このツィートは<strong>スレッタ</strong>だ。私がそう判断した</p>
+                <% elsif tweet.miorine? %>
+                  <p>このツィートは<strong>ミオリネ</strong>だ。私がそう判断した</p>
+                <% else %>
+                  <p>このツィートはスレミオ/スレッタ/ミオリネの<strong>いずれでもない。</strong>私がそう判断した</p>
+                <% end %>
+              <% else %>
+                <%= form_with(model: tweet, class: "d-flex gap-2") do |form| %>
+                  <%= form.button :classification,
+                    value: Tweet::Classification::SULEMIO,
+                    class: "btn btn-success w-100" do %>
+                    スレミオ
+                  <% end %>
+                  <%= form.button :classification,
+                    value: Tweet::Classification::SULETTA,
+                    class: "btn btn-danger w-100" do %>
+                    スレッタ
+                  <% end %>
+                  <%= form.button :classification,
+                    value: Tweet::Classification::MIORINE,
+                    class: "btn btn-primary w-100" do %>
+                    ミオリネ
+                  <% end %>
+                  <%= form.button :classification,
+                    value: Tweet::Classification::OTHER,
+                    class: "btn btn-secondary w-100" do %>
+                    他
+                  <% end %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<% end %>
