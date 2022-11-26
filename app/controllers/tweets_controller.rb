@@ -5,11 +5,11 @@ class TweetsController < ApplicationController
   def index
     limit = 6
     if @classification = params[:classification]
-      @tweets = Tweet.where(classified: true, classification: @classification).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).limit(limit)
-      @count = Tweet.where(classified: true, classification: @classification).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).count
+      @tweets = Tweet.classified_with_photo(@classification).limit(limit)
+      @count = Tweet.classified_with_photo(@classification).count
     else
-      @tweets = Tweet.where(classified: false).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).limit(limit)
-      @count = Tweet.where(classified: false).where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc).count
+      @tweets = Tweet.unclassified_with_photo.limit(limit)
+      @count = Tweet.unclassified_with_photo.count
     end
   end
 
