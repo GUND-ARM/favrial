@@ -14,7 +14,13 @@ class Tweet < ApplicationRecord
       :OTHER     # それ以外
       #:WITHHOLD, # 判断を保留する（心がふたつあるんじゃ）
     ].each do |k|
-      Classification.const_set(k, k.to_s.downcase.freeze)
+      const_set(k, k.to_s.downcase.freeze)
+    end
+
+    def self.constants_hash
+      constants.map do |k|
+        [k, const_get(k)]
+      end.to_h
     end
   end
 
@@ -27,8 +33,14 @@ class Tweet < ApplicationRecord
         :NOVEL,        # 画像化された小説
         :OTHER         # 本編キャプチャによる萌え語り, フィギュアやプラモの撮影など？
       ].each do |k|
-        Photo.const_set(k, k.to_s.downcase.freeze)
+        const_set(k, k.to_s.downcase.freeze)
       end
+    end
+
+    def self.constants_hash
+      constants.map do |k|
+        [k, const_get(k)]
+      end.to_h
     end
   end
 
@@ -38,7 +50,13 @@ class Tweet < ApplicationRecord
       :PHOTO,   # 画像つきツィート
       :OTHER    # その他のツィート
     ].each do |k|
-      MediaType.const_set(k, k.to_s.downcase.freeze)
+      const_set(k, k.to_s.downcase.freeze)
+    end
+
+    def self.constants_hash
+      constants.map do |k|
+        [k, const_get(k)]
+      end.to_h
     end
   end
 
