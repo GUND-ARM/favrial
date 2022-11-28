@@ -24,28 +24,7 @@
                   <p>このツィートはスレミオ/スレッタ/ミオリネの<strong>いずれでもない。</strong>私がそう判断した</p>
                 <% end %>
               <% else %>
-                <%= form_with(model: tweet, class: "d-flex gap-2") do |form| %>
-                  <%= form.button :classification,
-                    value: Tweet::Classification::SULEMIO,
-                    class: "btn btn-success w-100" do %>
-                    スレミオ
-                  <% end %>
-                  <%= form.button :classification,
-                    value: Tweet::Classification::SULETTA,
-                    class: "btn btn-danger w-100" do %>
-                    スレッタ
-                  <% end %>
-                  <%= form.button :classification,
-                    value: Tweet::Classification::MIORINE,
-                    class: "btn btn-primary w-100" do %>
-                    ミオリネ
-                  <% end %>
-                  <%= form.button :classification,
-                    value: Tweet::Classification::OTHER,
-                    class: "btn btn-secondary w-100" do %>
-                    他
-                  <% end %>
-                <% end %>
+                <%= render(ActionButtonComponent.new(tweet: tweet) ) %>
               <% end %>
             </div>
           </div>
