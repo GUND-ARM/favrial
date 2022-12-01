@@ -1,6 +1,5 @@
 class TweetsController < ApplicationController
   before_action :set_tweet, only: %i[ show edit update destroy ]
-  before_action :turbo_frame_request_variant, only: %i[ index ]
 
   # GET /tweets or /tweets.json
   def index
@@ -74,9 +73,5 @@ class TweetsController < ApplicationController
     def tweet_params
       #params.require(:tweet).permit(:t_id, :body, :url, :raw_json, :type, :classification, :classified)
       params.require(:tweet).permit(:classification)
-    end
-
-    def turbo_frame_request_variant
-      request.variant = :turbo_frame if turbo_frame_request?
     end
 end
