@@ -1,19 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  t_id: MyString
-  body: MyText
-  url: MyString
-  raw_json: MyText
-  type: 
-  classification: MyString
-  classified: false
-
-two:
-  t_id: MyString
-  body: MyText
-  url: MyString
-  raw_json: MyText
-  type: 
-  classification: MyString
-  classified: false
+#one:
+#  t_id: MyString
+#  body: MyText
+#  url: MyString
+#  raw_json: MyText
+#  type: 
+#  classification: MyString
+#  classified: false
+#
+#two:
+#  t_id: MyString
+#  body: MyText
+#  url: MyString
+#  raw_json: MyText
+#  type: 
+#  classification: MyString
+#  classified: false
