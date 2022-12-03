@@ -11,7 +11,7 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   def auth_hash
-    {
+    h = {
       "provider" => "twitter2",
       "uid" => "1585913733750042624",
       "info" => {
@@ -32,5 +32,6 @@ class ActiveSupport::TestCase
         "expires" => true
       }
     }.freeze
+    ActiveSupport::HashWithIndifferentAccess.new(h)
   end
 end

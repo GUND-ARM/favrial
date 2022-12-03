@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
+  resources :users
   root "tweets#index"
   resources :credentials
   resources :tweets
+  resources :sessions
 
-  get '/auth/:provider/callback', to: 'credentials#create'
+  get '/auth/:provider/callback', to: 'sessions#create'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
