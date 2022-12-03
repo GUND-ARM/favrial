@@ -1,0 +1,60 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Favrial</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            絵
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/tweets?classification=sulemio">スレミオ</a></li>
+            <li><a class="dropdown-item" href="/tweets?classification=other">スレミオ以外</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/tweets">未分類</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <%= link_to "ネタ", tweets_path, {class: "nav-link"} %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "ツィートを追加", new_tweet_path, {class: "nav-link"} %>
+        </li>
+      </ul>
+
+      <!--
+      <form class="d-flex mx-3" role="search">
+        <input class="form-control me-2" type="search" placeholder="検索" aria-label="検索">
+        <button class="btn btn-outline-success text-nowrap" type="submit">検索</button>
+        </form>
+      -->
+
+      <% if @current_user %>
+        <div class="dropdown mx-3">
+          <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://pbs.twimg.com/profile_images/1587357812614516737/G0LrRMe7_normal.jpg" alt="mdo" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser1">
+            <li class="p-3">
+              <div>
+                <p class=""><%= @current_user.name %></p>
+                <p class="text-muted">@<%= @current_user.username %></p>
+              </div>
+            </li>
+            <!--<li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">設定</a></li>-->
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <%= button_to "ログアウト", "/sessions/destroy", method: :delete, data: { turbo: false }, class: "dropdown-item" %>
+            </li>
+          </ul>
+        </div>
+      <% else %>
+        <%= link_to "ログイン", "/auth/twitter2", data: { turbo: false }, class: "btn btn-primary mx-3" %>
+      <% end %>
+    </div>
+  </div>
+</nav>
