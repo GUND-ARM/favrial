@@ -11,11 +11,15 @@ class User < ApplicationRecord
     name = h[:info][:name]
     username = h[:info][:nickname]
     credentials = h[:credentials]
+    User.find_and_save_with_oauth_params(uid, name, username, credentials)
+  end
 
-    User.find_or_create_by(uid: uid) do |user|
-      user.name = name
-      user.username = username
-      user.credential = Credential.from_credentials_hash(credentials)
-    end
+  def self.find_and_save_with_oauth_params(uid, name, username, credentials)
+    u = User.find_or_initialize_by(uid: uid)
+    u.name = name
+    u.username = username
+    u.credential = Credential.from_credentials_hash(credentials)
+    u.save
+    return u
   end
 end
