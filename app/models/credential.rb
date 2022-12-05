@@ -16,9 +16,4 @@ class Credential < ApplicationRecord
       }
     )
   end
-
-  #def self.create_from_auth_hash(auth_hash)
-  #  c = Credential.from_auth_hash(auth_hash)
-  #  c.save
-  #end
 end
