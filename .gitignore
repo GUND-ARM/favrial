@@ -35,4 +35,5 @@
 
 /node_modules
 
-.irb_history
+/.irb_history
+/.env
