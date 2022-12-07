@@ -81,6 +81,7 @@ ENV RAILS_ENV="development"
 #COPY --from=development_builder /usr/local/bundle /usr/local/bundle
 COPY Gemfile ${APPROOT}
 COPY Gemfile.lock ${APPROOT}
+COPY .irbrc /root/
 RUN gem install bundler && bundle install
 
 #
