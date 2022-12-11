@@ -34,4 +34,24 @@ class ActiveSupport::TestCase
     }.freeze
     ActiveSupport::HashWithIndifferentAccess.new(h)
   end
+
+  def timeline_api_response
+    json_file = './test/fixtures/files/reverse_chronological.json'
+    JSON.parse(File.open(json_file).read)
+  end
+
+  def tweet_hash_with_media
+    {
+      "text" => "やっと婿と嫁揃った！！！、！スミ！！！！！！！　婿もうちょい買えば良かったわ\nスレミオ味ふおおおおおおおおお！！！！！\nファミマで見つけたとき、思わずクソデカ大声で、え！！？？ミオミオ！って言いそうになったけど抑えた俺偉い https://t.co/UcvAwut0Fk",
+      "id" => "1600535525244698626",
+      "edit_history_tweet_ids" => [
+        "1600535525244698626"
+      ],
+      "attachments" => {
+        "media_keys" => [
+          "3_1600535519317745664"
+        ]
+      }
+    }
+  end
 end

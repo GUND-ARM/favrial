@@ -18,5 +18,8 @@ module App
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # lib/autoload をZeitwerkで読み込めるようにする
+    config.eager_load_paths << Rails.root.join("lib/autoload")
   end
 end
