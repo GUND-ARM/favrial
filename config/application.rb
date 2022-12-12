@@ -21,5 +21,8 @@ module App
 
     # lib/autoload をZeitwerkで読み込めるようにする
     config.eager_load_paths << Rails.root.join("lib/autoload")
+
+    # ActiveJobのアダプタの設定
+    config.active_job.queue_adapter = :sidekiq
   end
 end

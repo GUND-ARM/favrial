@@ -1,0 +1,4 @@
+:schedule:
+  sample:
+    cron: '*/30 * * * * *'
+    class: SampleJob

@@ -10,7 +10,9 @@ services:
       target: development
     volumes:
       *rails_volumes
-  default_worker:
+  worker:
+    build:
+      target: development
     volumes:
       *rails_volumes
   js:

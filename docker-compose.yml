@@ -24,7 +24,9 @@ services:
     environment:
       << : *rails_environment
     command: rails server -b 0.0.0.0
-  default_worker:
+    #command: rdbg --open -- bin/rails server -b 0.0.0.0
+    ## use with: ./docker_compose exec web rdbg -A
+  worker:
     build:
       *rails_build
     image: ${COMPOSE_PROJECT_NAME}:latest
@@ -35,7 +37,9 @@ services:
       << : *rails_environment
       QUEUE: default
       VERBOSE: 1
-    command: rake resque:work
+    command: bin/bundle exec sidekiq
+    #command: rdbg --open -- bin/bundle exec sidekiq
+    ## use with: ./docker_compose exec worker rdbg -A
   redis:
     image: redis
   db:
