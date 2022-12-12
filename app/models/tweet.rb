@@ -65,14 +65,14 @@ class Tweet < ApplicationRecord
   attribute :classified, default: false
 
   scope :classified_with_photo, lambda { |classification|
-    where(classified: true, classification: classification).
-      where(media_type: Tweet::MediaType::PHOTO).
-      order(created_at: :desc)
+    where(classified: true, classification: classification)
+      .where(media_type: Tweet::MediaType::PHOTO)
+      .order(created_at: :desc)
   }
   scope :unclassified_with_photo, lambda {
-    where(classified: false).
-      where(media_type: Tweet::MediaType::PHOTO).
-      order(created_at: :desc)
+    where(classified: false)
+      .where(media_type: Tweet::MediaType::PHOTO)
+      .order(created_at: :desc)
   }
 
   before_save do
