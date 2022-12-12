@@ -96,9 +96,9 @@ class Tweet < ApplicationRecord
   end
 
   def self.fetch_timeline(fetch_count=1)
-    token = Credential.order(created_at: :desc).first.token
+    credential = User.first.credential
 
-    res = Tweet.api_access(token, '/2/users/me')
+    res = TwitterAPI::Client.api_access(credential: credential, path: '/2/users/me')
     case res
     in Net::HTTPSuccess
       json = JSON.parse(res.body)
@@ -107,12 +107,12 @@ class Tweet < ApplicationRecord
 
     pagination_token = nil
     fetch_count.times do
-      pagination_token = Tweet.fetch_timeline_once(token, user_id, pagination_token)
+      pagination_token = Tweet.fetch_timeline_once(credential, user_id, pagination_token)
       break unless pagination_token 
     end
   end
 
-  def self.fetch_timeline_once(token, user_id, pagination_token=nil)
+  def self.fetch_timeline_once(credential, user_id, pagination_token=nil)
     params = {
       'tweet.fields' => 'text,referenced_tweets,attachments',
       'expansions' => 'referenced_tweets.id,attachments.media_keys',
@@ -122,103 +122,44 @@ class Tweet < ApplicationRecord
       params['pagination_token'] = pagination_token
     end
 
-    res = Tweet.api_access(token, "/2/users/#{user_id}/timelines/reverse_chronological", params)
+    res = TwitterAPI::Client.api_access(
+      credential: credential,
+      path: "/2/users/#{user_id}/timelines/reverse_chronological",
+      params: params
+    )
     case res
     in Net::HTTPSuccess
-      json = JSON.parse(res.body).with_indifferent_access
+      api_response = JSON.parse(res.body).with_indifferent_access
+      Tweet.create_many_from_api_response(api_response)
+      return TwitterAPI::ResponseOperator.new(api_response).next_token
     end
+  end
 
-    medias_hash = {}
-    case json
-    in { includes: { media: Array => medias } }
-      medias.each do |m|
-        medias_hash[m["media_key"]] = {"type" => m["type"]}
-      end
-    else
-      # do nothing
-    end
-
-    case data = json['data']
-    in Array
-      tweets = data
-    end
-
-    case json
-    in { includes: { tweets: Array => ts } }
-      tweets += ts
-    else
-      # do not anything
-    end
-
-    tweets = tweets.reject do |t|
-      t['referenced_tweets'] &&
-        t['referenced_tweets'][0] &&
-        t['referenced_tweets'][0]['type'] == 'retweeted'
-    end
+  # api_response is a hash
+  def self.create_many_from_api_response(api_response)
+    op = TwitterAPI::ResponseOperator.new(api_response)
+    tweets = op.bare_tweets
     tweets = tweets.map do |t|
-      case t
-      in { attachments: { media_keys: media_keys } }
-        k = media_keys[0]
-        t['type'] = medias_hash[k]['type'] if medias_hash[k]
-      else
-        # do nothing
+      media_type = op.media_type_for_tweet(t)
+      Tweet.find_or_create_from_tweet_hash_with_media_type(
+        tweet_hash: t,
+        media_type: media_type
+      )
+    end
+    return tweets
+  end
+
+  # 1ツィートを表すHashからレコードを検索する
+  # レコードが存在しなければ, 1ツィートを表すHashとメディアタイプから新規レコードを追加する
+  def self.find_or_create_from_tweet_hash_with_media_type(tweet_hash:, media_type:)
+    tweet_hash = tweet_hash.with_indifferent_access
+    case [tweet_hash, media_type]
+    in [{ id: String => t_id, text: String => text }, MediaType::PHOTO | MediaType::OTHER]
+      Tweet.find_or_create_by(t_id: t_id) do |t|
+        t.body = text
+        t.raw_json = hash.to_json
+        t.media_type = media_type
       end
-      t
-    end
-    tweets.each do |t|
-      Tweet.find_or_create_from_tweet_hash(t)
-    end
-
-    json['meta']['next_token']
-  end
-
-  def self.api_access(token, path, params=nil)
-    uri = URI.parse(path)
-    if params
-      uri.query = URI.encode_www_form(params)
-    end
-    http = Net::HTTP.new('api.twitter.com', 443)
-    http.use_ssl = true
-    req = Net::HTTP::Get.new(uri.to_s)
-    req['Authorization'] = "Bearer #{token}"
-    req['Content-type'] = 'application/json'
-    res = http.request(req)
-  end
-
-  # APIレスポンスのhashから複数のTweetを作成する
-  def self.create_from_response_hash(hash)
-    tweets = hash['data']
-    tweets.each do |t|
-      Tweet.find_or_create_from_tweet_hash(t)
-    end
-  end
-
-  # t_id が id に一致するTweetが見つからなければレコード追加
-  def self.find_or_create_from_tweet_hash(hash)
-    #
-    # example of `hash`:
-    #   {
-    #     "edit_history_tweet_ids": [
-    #       "1591727016780660736"
-    #     ],
-    #     "id": "1591727016780660736",
-    #     "text": "7話でミオリネさんに身惚れてくんないかな〜〜〜かな〜〜〜！！！！！！！"
-    #   }
-    #
-    case [hash['id'], hash['text']]
-    in [String, String]
-      t_id = hash['id']
-      text = hash['text']
-    end
-    type = if hash['type'] == 'photo'
-             Tweet::MediaType::PHOTO
-           else
-             Tweet::MediaType::OTHER
-           end
-    Tweet.find_or_create_by(t_id: t_id) do |t|
-      t.body = text
-      t.raw_json = hash.to_json
-      t.media_type = type
     end
   end
 end
