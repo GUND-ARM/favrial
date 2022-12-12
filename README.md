@@ -1,24 +1,26 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+ビルド
 
-Things you may want to cover:
+```sh
+./docker_compose build
+```
 
-* Ruby version
+Gemfile.lock の更新
 
-* System dependencies
+```sh
+./docker_compose run --rm web bundle install
+```
 
-* Configuration
+起動
 
-* Database creation
+```sh
+./docker_compose up
+```
 
-* Database initialization
+## バックアップ
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```sh
+./rails backup:tweet:json > tweets_1970_01_01.jsonl
+./rails backup:tweet:yaml > tweets_1970_01_01.yaml
+```
