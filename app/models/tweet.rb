@@ -157,7 +157,7 @@ class Tweet < ApplicationRecord
     in [{ id: String => t_id, text: String => text }, MediaType::PHOTO | MediaType::OTHER]
       Tweet.find_or_create_by(t_id: t_id) do |t|
         t.body = text
-        t.raw_json = hash.to_json
+        t.raw_json = tweet_hash.to_json
         t.media_type = media_type
       end
     end
