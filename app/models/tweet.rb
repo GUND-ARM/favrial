@@ -63,6 +63,7 @@ class Tweet < ApplicationRecord
   module MediaType
     [
       :PHOTO,   # 画像つきツィート
+      :NONE,    # メディアの無いツィート
       :OTHER    # その他のツィート
     ].each do |k|
       const_set(k, k.to_s.downcase.freeze)
@@ -110,44 +111,24 @@ class Tweet < ApplicationRecord
     classification == Classification::SULETTA
   end
 
-  def self.fetch_timeline(fetch_count=1)
-    credential = User.first.credential
-
-    res = TwitterAPI::Client.api_access(credential: credential, path: '/2/users/me')
-    case res
-    in Net::HTTPSuccess
-      json = JSON.parse(res.body)
-      user_id = json['data']['id']
-    end
+  def self.import_timelines(fetch_count = 1)
+    user = User.first
 
     pagination_token = nil
     fetch_count.times do
-      pagination_token = Tweet.fetch_timeline_once(credential, user_id, pagination_token)
-      break unless pagination_token 
+      tweets_response = Tweet.import_timeline(user, pagination_token)
+      pagination_token = tweets_response.next_token
+      break unless pagination_token
     end
   end
 
-  def self.fetch_timeline_once(credential, user_id, pagination_token=nil)
-    params = {
-      'tweet.fields' => 'text,referenced_tweets,attachments',
-      'expansions' => 'referenced_tweets.id,attachments.media_keys',
-      'media.fields' => 'type'
-    }
-    if pagination_token
-      params['pagination_token'] = pagination_token
-    end
-
-    res = TwitterAPI::Client.api_access(
-      credential: credential,
-      path: "/2/users/#{user_id}/timelines/reverse_chronological",
-      params: params
+  def self.import_timeline(user, pagination_token)
+    tweets_response = TwitterAPI::Client.fetch_timelines_reverse_chronological(
+      user,
+      pagination_token
     )
-    case res
-    in Net::HTTPSuccess
-      api_response = JSON.parse(res.body).with_indifferent_access
-      Tweet.create_many_from_api_response(api_response)
-      return TwitterAPI::ResponseOperator.new(api_response).next_token
-    end
+    Tweet.create_many_from_api_response(tweets_response.body)
+    return tweets_response
   end
 
   # api_response is a hash
