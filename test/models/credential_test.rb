@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: credentials
+#
+#  id            :bigint           not null, primary key
+#  token         :string
+#  expires_at    :integer
+#  expires       :boolean
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  refresh_token :string
+#  user_id       :bigint
+#
 require "test_helper"
 
 class CredentialTest < ActiveSupport::TestCase
