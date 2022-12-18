@@ -146,6 +146,7 @@ class Tweet < ApplicationRecord
         media_type: media_type
       )
     end
+    Rails.logger.info "#{tweets.count} tweets inserted"
     return tweets
   end
 
