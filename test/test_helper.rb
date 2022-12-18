@@ -35,6 +35,27 @@ class ActiveSupport::TestCase
     ActiveSupport::HashWithIndifferentAccess.new(h)
   end
 
+  def access_token
+    client = oauth2_client
+    OAuth2::AccessToken.new(
+      client,
+      "bWU3S3RZRTNreHFTSHhLdEdyQjdzeWYwY2J6OW1BUWNsVlVWTWpFTjlzd3NHOjE2NzA5OTA3NTMxNjg6MToxOmF0OjE",
+      refresh_token: "UVU0eVEyWTNrNWNqWGxKUFB0X2t5NUVpT2VqbHY0TXU3WXB5eHVLc1NHMEhROjE2NzA5OTA3NTMxNjg6MTowOnJ0OjE",
+      expires_at: 1670997953
+    )
+  end
+
+  def oauth2_client
+    OAuth2::Client.new(
+      ENV['TWITTER_CLIENT_ID'],
+      ENV['TWITTER_CLIENT_SECRET'],
+      site: 'https://api.twitter.com',
+      token_url: "2/oauth2/token",
+      authorize_url: "https://twitter.com/i/oauth2/authorize"
+    )
+  end
+
+
   def timeline_api_response
     json_file = './test/fixtures/files/reverse_chronological.json'
     JSON.parse(File.open(json_file).read)
