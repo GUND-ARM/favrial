@@ -1,4 +1,7 @@
 :schedule:
-  sample:
-    cron: '*/30 * * * * *'
-    class: SampleJob
+  refresh_credential:
+    every: '5m'
+    class: RefreshCredentialJob
+  fetch_timeline:
+    every: '15m'
+    class: FetchTimelineJob
