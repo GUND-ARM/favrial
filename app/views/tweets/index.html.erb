@@ -9,7 +9,7 @@
   <h1 class="mt-4 mb-3">未分類の絵</h1>
 <% end %>
 
-<p><%= @count %> のツィート</p>
+<p><%= @tweets.total_count %> のツィート</p>
 
 <%= turbo_frame_tag "page_handler" %>
 <div id="tweets"

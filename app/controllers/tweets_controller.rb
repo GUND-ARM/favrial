@@ -6,10 +6,8 @@ class TweetsController < ApplicationController
   def index
     if @classification = params[:classification]
       @tweets = Tweet.classified_with_photo(@classification).page(params[:page])
-      @count = Tweet.classified_with_photo(@classification).count
     else
       @tweets = Tweet.unclassified_with_photo.page(params[:page])
-      @count = Tweet.unclassified_with_photo.count
     end
   end
 
