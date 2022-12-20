@@ -18,7 +18,7 @@ module TwitterAPI
 
       case res
       in Net::HTTPSuccess
-        TweetsResponse.new(res)
+        TweetsResponse.new(res.body)
       end
     end
 
@@ -87,14 +87,10 @@ module TwitterAPI
   #end
 
   class TweetsResponse
-    attr_reader :http_response
+    attr_reader :raw_body
 
-    def initialize(http_response)
-      @http_response = http_response
-    end
-
-    def raw_body
-      @http_response.body
+    def initialize(http_response_body)
+      @raw_body = http_response_body
     end
 
     def body

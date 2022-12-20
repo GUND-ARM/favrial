@@ -55,10 +55,13 @@ class ActiveSupport::TestCase
     )
   end
 
-
-  def timeline_api_response
+  def raw_reverse_chronological_response
     json_file = './test/fixtures/files/reverse_chronological.json'
-    JSON.parse(File.open(json_file).read)
+    File.open(json_file).read
+  end
+
+  def reverse_chronological_response
+    JSON.parse(raw_reverse_chronological_response)
   end
 
   def tweet_hash_with_media
