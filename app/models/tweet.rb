@@ -2,16 +2,17 @@
 #
 # Table name: tweets
 #
-#  id             :bigint           not null, primary key
-#  t_id           :string
-#  body           :text
-#  url            :string
-#  raw_json       :text
-#  media_type     :string
-#  classification :string
-#  classified     :boolean
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
+#  id              :bigint           not null, primary key
+#  t_id            :string
+#  body            :text
+#  url             :string
+#  raw_json        :text
+#  media_type      :string
+#  classification  :string
+#  classified      :boolean
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  first_media_url :string
 #
 class Tweet < ApplicationRecord
   # こんなかんじで定数の一覧がとれる
@@ -127,19 +128,26 @@ class Tweet < ApplicationRecord
       user,
       pagination_token
     )
-    Tweet.create_many_from_api_response(tweets_response.body)
+    Tweet.create_many_from_api_response(tweets_response)
     return tweets_response
   end
 
   # api_response is a hash
-  def self.create_many_from_api_response(api_response)
-    op = TwitterAPI::ResponseOperator.new(api_response)
-    tweets = op.bare_tweets
+  def self.create_many_from_api_response(tweets_response)
+    tweets = tweets_response.bare_tweets
     tweets = tweets.map do |t|
-      media_type = op.media_type_for_tweet(t)
-      Tweet.find_or_create_from_tweet_hash_with_media_type(
+      media_type = tweets_response.media_type_for_tweet(t)
+      case media_type
+      in Tweet::MediaType::PHOTO
+        first_media_url = tweets_response.first_media_url_for_tweet(t)
+      else
+        first_media_url = nil
+      end
+
+      Tweet.find_or_create_with(
         tweet_hash: t,
-        media_type: media_type
+        media_type: media_type,
+        first_media_url: first_media_url
       )
     end
     Rails.logger.info "#{tweets.count} tweets inserted"
@@ -148,14 +156,15 @@ class Tweet < ApplicationRecord
 
   # 1ツィートを表すHashからレコードを検索する
   # レコードが存在しなければ, 1ツィートを表すHashとメディアタイプから新規レコードを追加する
-  def self.find_or_create_from_tweet_hash_with_media_type(tweet_hash:, media_type:)
+  def self.find_or_create_with(tweet_hash:, media_type:, first_media_url: nil)
     tweet_hash = tweet_hash.with_indifferent_access
     case [tweet_hash, media_type]
-    in [{ id: String => t_id, text: String => text }, MediaType::PHOTO | MediaType::OTHER]
+    in [{ id: String => t_id, text: String => text }, MediaType::PHOTO | MediaType::NONE | MediaType::OTHER]
       Tweet.find_or_create_by(t_id: t_id) do |t|
         t.body = text
         t.raw_json = tweet_hash.to_json
         t.media_type = media_type
+        t.first_media_url = first_media_url
       end
     end
   end
