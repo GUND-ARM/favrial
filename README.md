@@ -12,6 +12,12 @@ Gemfile.lock の更新
 ./docker_compose run --rm web bundle install
 ```
 
+モデルのアノテーション
+
+```sh
+./docker_compose run --rm web bundle exec annotate --models
+```
+
 起動
 
 ```sh
