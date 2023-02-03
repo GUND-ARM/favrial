@@ -1,0 +1,10 @@
+x-rails_common: &rails_common
+  build:
+    target: production
+  image: ${COMPOSE_PROJECT_NAME}:latest-production
+
+services:
+  web:
+    <<: *rails_common
+  worker:
+    <<: *rails_common

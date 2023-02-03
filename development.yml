@@ -1,35 +1,22 @@
-x-rails_volumes:
-  &rails_volumes
-  - type: bind
-    source: .
-    target: /opt/app
+x-rails_common: &rails_common
+  build:
+    target: development
+  image: ${COMPOSE_PROJECT_NAME}:latest-development
+  volumes:
+    - type: bind
+      source: .
+      target: /opt/app
 
 services:
   web:
-    build:
-      target: development
-    volumes:
-      *rails_volumes
+    <<: *rails_common
   worker:
-    build:
-      target: development
-    volumes:
-      *rails_volumes
+    <<: *rails_common
   js:
-    build:
-      context: .
-      target: development
-    image: ${COMPOSE_PROJECT_NAME}:latest
-    volumes:
-      *rails_volumes
     command: yarn build --watch
     tty: true
+    <<: *rails_common
   css:
-    build:
-      context: .
-      target: development
-    image: ${COMPOSE_PROJECT_NAME}:latest
-    volumes:
-      *rails_volumes
     command: yarn build:css --watch
     tty: true
+    <<: *rails_common

@@ -8,16 +8,13 @@ x-rails-environment:
 x-rails-build:
   &rails_build
   context: .
-  #args:
-  #  REDIS_URL: "redis://redis:6379/1"
 
 services:
   web:
     build:
       *rails_build
-    image: ${COMPOSE_PROJECT_NAME}:latest
     ports: 
-      - "127.0.0.1:${APP_WEB_PORT:-3000}:3000"
+      - 127.0.0.1:${APP_WEB_PORT:-3000}:3000
     depends_on:
       - db
       - redis
@@ -29,7 +26,6 @@ services:
   worker:
     build:
       *rails_build
-    image: ${COMPOSE_PROJECT_NAME}:latest
     depends_on:
       - db
       - redis
