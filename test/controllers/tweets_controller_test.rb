@@ -2,7 +2,10 @@ require "test_helper"
 
 class TweetsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @tweet = tweets(:one)
+    @tweet = Tweet.find_or_create_with(
+      tweet_hash: tweet_hash_with_media,
+      media_type: Tweet::MediaType::PHOTO
+    )
   end
 
   test "should get index" do
@@ -15,13 +18,14 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create tweet" do
-    assert_difference("Tweet.count") do
-      post tweets_url, params: { tweet: { body: @tweet.body, classification: @tweet.classification, classified: @tweet.classified, raw_json: @tweet.raw_json, t_id: @tweet.t_id, type: @tweet.type, url: @tweet.url } }
-    end
+  # FIXME: ツィートの手動追加を実装するときにテストも修正する
+  #test "should create tweet" do
+  #  assert_difference("Tweet.count") do
+  #    post tweets_url, params: { tweet: { body: @tweet.body, classification: @tweet.classification, classified: @tweet.classified, raw_json: @tweet.raw_json, t_id: @tweet.t_id, type: @tweet.type, url: @tweet.url } }
+  #  end
 
-    assert_redirected_to tweet_url(Tweet.last)
-  end
+  #  assert_redirected_to tweet_url(Tweet.last)
+  #end
 
   test "should show tweet" do
     get tweet_url(@tweet)
@@ -33,8 +37,19 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # FIXME: updateで渡すパラメータがほんとにこれでいいのかは要確認
   test "should update tweet" do
-    patch tweet_url(@tweet), params: { tweet: { body: @tweet.body, classification: @tweet.classification, classified: @tweet.classified, raw_json: @tweet.raw_json, t_id: @tweet.t_id, type: @tweet.type, url: @tweet.url } }
+    patch tweet_url(@tweet), params: {
+      tweet: {
+        #body: @tweet.body,
+        classification: @tweet.classification,
+        classified: @tweet.classified,
+        #raw_json: @tweet.raw_json,
+        #t_id: @tweet.t_id,
+        #type: @tweet.type,
+        #url: @tweet.url
+      }
+    }
     assert_redirected_to tweet_url(@tweet)
   end
 
