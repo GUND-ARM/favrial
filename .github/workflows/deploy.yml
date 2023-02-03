@@ -22,13 +22,13 @@ jobs:
         echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
         echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
         cat > ~/.ssh/config <<EOF
-        Host production
+        Host favrial_production
           HostName ${SSH_HOSTNAME}
           User ${SSH_USER}
         EOF
     - name: Deploy to host
       env:
-        DOCKER_HOST: production
+        DOCKER_HOST: ssh://favrial_production
         COMPOSE_PROJECT_NAME: favrial
         APP_WEB_PORT: 8001
         SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
