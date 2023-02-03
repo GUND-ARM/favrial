@@ -17,7 +17,6 @@
 /config/master.key
 
 /tmp/pids/*
-!/tmp/pids/
 !/tmp/pids/.keep
 
 /storage/*
