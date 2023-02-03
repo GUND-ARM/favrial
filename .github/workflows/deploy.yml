@@ -1,0 +1,41 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: favrial_production
+    steps:
+    - uses: actions/checkout@v2
+    - name: Create ssh config
+      env:
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      run: |
+        mkdir ~/.ssh
+        echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+        echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+        cat > ~/.ssh/config <<EOF
+        Host production
+          HostName ${SSH_HOSTNAME}
+          User ${SSH_USER}
+        EOF
+    - name: Create docker context
+      run: |
+        docker context create --docker host=ssh://production production
+        docker context use production
+    - name: Deploy to host
+      env:
+        COMPOSE_PROJECT_NAME: favrial
+        APP_WEB_PORT: 8001
+        SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+        TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID }}
+        TWITTER_CLIENT_SECRET: ${{ secrets.TWITTER_CLIENT_SECRET }}
+      run: |
+        ./deploy.sh
