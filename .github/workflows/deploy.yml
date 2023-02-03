@@ -28,7 +28,7 @@ jobs:
         EOF
     - name: Deploy to host
       env:
-        DOCKER_HOST: ssh://favrial_production
+        SSH_HOST: favrial_production
         COMPOSE_PROJECT_NAME: favrial
         APP_WEB_PORT: 8001
         SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
