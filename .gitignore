@@ -37,3 +37,4 @@
 
 /.irb_history
 /.env
+/production.env
