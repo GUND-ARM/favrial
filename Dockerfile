@@ -43,4 +43,5 @@ ARG APPROOT
 ENV RAILS_ENV="production"
 
 COPY . ${APPROOT}
-RUN SECRET_KEY_BASE=$(rails secret) rails assets:precompile
+# FIXME: precompileしたassetsを配信できるようになったらコメントをはずす
+#RUN SECRET_KEY_BASE=$(rails secret) rails assets:precompile
