@@ -41,7 +41,7 @@ FROM base as production
 
 ARG APPROOT
 ENV RAILS_ENV="production"
+ENV RAILS_SERVE_STATIC_FILES="1"
 
 COPY . ${APPROOT}
-# FIXME: precompileしたassetsを配信できるようになったらコメントをはずす
-#RUN SECRET_KEY_BASE=$(rails secret) rails assets:precompile
+RUN SECRET_KEY_BASE=$(rails secret) rails assets:precompile
