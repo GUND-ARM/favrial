@@ -13,5 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Create database
+        run: ./rails db:create
       - name: Run tests on docker compose
         run: ./rails test
