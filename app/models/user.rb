@@ -33,4 +33,25 @@ class User < ApplicationRecord
     u.save
     return u
   end
+
+  # ホームタイムラインを指定回数さかのぼって取得する
+  def fetch_reverse_chronological_timelines(fetch_count = 1)
+    pagination_token = nil
+    fetch_count.times do
+      tweets_response = fetch_reverse_chronological_timeline(pagination_token)
+      pagination_token = tweets_response.next_token
+      break unless pagination_token
+    end
+  end
+
+  # ホームタイムラインをAPIアクセス1回分取得する
+  def fetch_reverse_chronological_timeline(pagination_token)
+    tweets_response = TwitterAPI::Client.fetch_timelines_reverse_chronological(
+      self,
+      pagination_token
+    )
+    # FIXME: Copilotくんが save_tweets_from_api_response のほうがいいよって言ってた
+    Tweet.create_many_from_api_response(tweets_response)
+    return tweets_response
+  end
 end

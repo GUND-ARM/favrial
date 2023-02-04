@@ -112,26 +112,6 @@ class Tweet < ApplicationRecord
     classification == Classification::SULETTA
   end
 
-  def self.import_timelines(fetch_count = 1)
-    user = User.first
-
-    pagination_token = nil
-    fetch_count.times do
-      tweets_response = Tweet.import_timeline(user, pagination_token)
-      pagination_token = tweets_response.next_token
-      break unless pagination_token
-    end
-  end
-
-  def self.import_timeline(user, pagination_token)
-    tweets_response = TwitterAPI::Client.fetch_timelines_reverse_chronological(
-      user,
-      pagination_token
-    )
-    Tweet.create_many_from_api_response(tweets_response)
-    return tweets_response
-  end
-
   # api_response is a hash
   def self.create_many_from_api_response(tweets_response)
     tweets = tweets_response.bare_tweets
