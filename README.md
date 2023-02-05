@@ -4,12 +4,7 @@
 
 ```sh
 ./docker_compose build
-```
-
-Gemfile.lock の更新
-
-```sh
-./docker_compose run --rm web bundle install
+./docker_compose run --rm web bundle lock  # これがないとローカルツリーのGemfile.lockが更新されない
 ```
 
 モデルのアノテーション
