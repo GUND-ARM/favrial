@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   resources :users
   root "tweets#index"
-  resources :credentials
   resources :tweets
   resources :sessions
 
