@@ -78,4 +78,13 @@ class ActiveSupport::TestCase
       }
     }
   end
+
+  def use_omniauth
+    OmniAuth.config.test_mode = true
+    OmniAuth.config.mock_auth[:twitter2] = auth_hash
+  end
+
+  def login
+    get '/auth/twitter2/callback'
+  end
 end

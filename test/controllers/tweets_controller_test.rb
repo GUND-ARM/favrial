@@ -2,6 +2,7 @@ require "test_helper"
 
 class TweetsControllerTest < ActionDispatch::IntegrationTest
   setup do
+    use_omniauth
     @tweet = Tweet.find_or_create_with(
       tweet_hash: tweet_hash_with_media,
       media_type: Tweet::MediaType::PHOTO
@@ -19,45 +20,65 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
   end
 
   # FIXME: ツィートの手動追加を実装するときにテストも修正する
-  #test "should create tweet" do
-  #  assert_difference("Tweet.count") do
-  #    post tweets_url, params: { tweet: { body: @tweet.body, classification: @tweet.classification, classified: @tweet.classified, raw_json: @tweet.raw_json, t_id: @tweet.t_id, type: @tweet.type, url: @tweet.url } }
-  #  end
+  test "should not create tweet" do
+    #assert_difference("Tweet.count") do
+    #  post tweets_url, params: { tweet: { body: @tweet.body, classification: @tweet.classification, classified: @tweet.classified, raw_json: @tweet.raw_json, t_id: @tweet.t_id, type: @tweet.type, url: @tweet.url } }
+    #end
 
-  #  assert_redirected_to tweet_url(Tweet.last)
-  #end
+    #assert_redirected_to tweet_url(Tweet.last)
+
+    post tweets_url, params: {
+      tweet: {
+        classification: @tweet.classification
+      }
+    }
+
+    assert_response :forbidden
+  end
 
   test "should show tweet" do
     get tweet_url(@tweet)
     assert_response :success
   end
 
-  test "should get edit" do
+  test "should get edit with login" do
+    login
     get edit_tweet_url(@tweet)
     assert_response :success
   end
 
-  # FIXME: updateで渡すパラメータがほんとにこれでいいのかは要確認
-  test "should update tweet" do
+  test "should not get edit without login" do
+    get edit_tweet_url(@tweet)
+    assert_response :forbidden
+  end
+
+  test "should update tweet with login" do
+    login
     patch tweet_url(@tweet), params: {
       tweet: {
-        #body: @tweet.body,
-        classification: @tweet.classification,
-        classified: @tweet.classified,
-        #raw_json: @tweet.raw_json,
-        #t_id: @tweet.t_id,
-        #type: @tweet.type,
-        #url: @tweet.url
+        classification: @tweet.classification
       }
     }
     assert_redirected_to tweet_url(@tweet)
   end
 
-  test "should destroy tweet" do
-    assert_difference("Tweet.count", -1) do
-      delete tweet_url(@tweet)
-    end
+  test "should not update tweet without login" do
+    patch tweet_url(@tweet), params: {
+      tweet: {
+        classification: @tweet.classification
+      }
+    }
+    assert_response :forbidden
+  end
 
-    assert_redirected_to tweets_url
+  # FIXME: ツィートの削除を実装したときにテストも修正する
+  test "should not destroy tweet" do
+    #assert_difference("Tweet.count", -1) do
+    #  delete tweet_url(@tweet)
+    #end
+    #assert_redirected_to tweets_url
+
+    delete tweet_url(@tweet)
+    assert_response :forbidden
   end
 end
