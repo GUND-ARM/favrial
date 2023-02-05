@@ -18,7 +18,7 @@ main > .container {
 
   <body class="d-flex flex-column h-100">
     <header>
-      <%= render(NavBarComponent.new(@current_user || nil)) %>
+      <%= render(NavBarComponent.new(current_user)) %>
     </header>
 
     <!-- Begin page content -->

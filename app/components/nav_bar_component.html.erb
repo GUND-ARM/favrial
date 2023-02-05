@@ -48,12 +48,12 @@
             <li><a class="dropdown-item" href="#">設定</a></li>-->
             <li><hr class="dropdown-divider"></li>
             <li>
-              <%= button_to "ログアウト", "/sessions/destroy", method: :delete, data: { turbo: false }, class: "dropdown-item" %>
+              <%= button_to "ログアウト", "/logout", method: :get, data: { turbo: false }, class: "dropdown-item" %>
             </li>
           </ul>
         </div>
       <% else %>
-        <%= link_to "ログイン", "/auth/twitter2", data: { turbo: false }, class: "btn btn-primary mx-3" %>
+        <%= button_to "ログイン", "/auth/twitter2", method: :post, data: { turbo: false }, class: "btn btn-primary mx-3" %>
       <% end %>
     </div>
   </div>

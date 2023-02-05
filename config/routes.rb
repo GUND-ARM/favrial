@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
-  resources :users
   root "tweets#index"
+  resources :users
   resources :tweets
-  resources :sessions
 
   get '/auth/:provider/callback', to: 'sessions#create'
+  get '/logout', to: 'sessions#destroy'
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
