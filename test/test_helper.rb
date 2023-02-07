@@ -35,6 +35,31 @@ class ActiveSupport::TestCase
     ActiveSupport::HashWithIndifferentAccess.new(h)
   end
 
+  def auth_hash_not_beta_user
+    h = {
+      "provider" => "twitter2",
+      "uid" => "28524511",
+      "info" => {
+        "name" => "🦝🍅の絵をふぁぼらない",
+        "email" => nil,
+        "nickname" => "witchandtrophy_fake",
+        "description" => "スレミオ共産主義",
+        "image" => "https://pbs.twimg.com/profile_images/1587357812614516737/G0LrRMe7_normal.jpg",
+        "urls" => {
+          "Website" => "https://t.co/e8lk5j66Ch",
+          "Twitter" => "https://twitter.com/witchandtrophy"
+        }
+      },
+      "credentials" => {
+        "token" => "eENmbUxvbnk5SnlxcGhacHdZbXNYT1FidVlJTXZDaHZUSGNyaDE0dmFQZGlrOjE2Njk5ODk2MzI5NjM6MToxOmF0OjE",
+        "refresh_token" => "cFJFdTctbGFOUHdGSmx4VUpUdmxnZGJWZGJPT1djZWdxbHJUT0x2RkE0eE5yOjE2Njk5OTY4MDM4NTA6MToxxxxxxxx",
+        "expires_at" => 1669996833,
+        "expires" => true
+      }
+    }.freeze
+    ActiveSupport::HashWithIndifferentAccess.new(h)
+  end
+
   def access_token
     client = oauth2_client
     OAuth2::AccessToken.new(
@@ -79,9 +104,9 @@ class ActiveSupport::TestCase
     }
   end
 
-  def use_omniauth
+  def use_omniauth(h=auth_hash)
     OmniAuth.config.test_mode = true
-    OmniAuth.config.mock_auth[:twitter2] = auth_hash
+    OmniAuth.config.mock_auth[:twitter2] = h
   end
 
   def login

@@ -24,6 +24,9 @@ main > .container {
     <!-- Begin page content -->
     <main class="flex-shrink-0">
       <div class="container">
+        <% if notice %>
+          <p class="alert alert-success mt-3"><%= notice %></p>
+        <% end %>
         <%= yield %>
       </div>
     </main>
