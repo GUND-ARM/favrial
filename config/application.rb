@@ -24,5 +24,19 @@ module App
 
     # ActiveJobのアダプタの設定
     config.active_job.queue_adapter = :sidekiq
+
+    # 公開リリースか？
+    config.public_release = false
+
+    # ログインを許可するTwitterユーザIDの一覧
+    unless config.public_release
+      config.beta_user_uids = [
+        "1585913733750042624",
+        "1597068484034588672",
+        "277453711",
+        "1294974565",
+        "142714687"
+      ]
+    end
   end
 end
