@@ -9,6 +9,8 @@ x-rails_common: &rails_common
 
 services:
   web:
+    tty: true
+    stdin_open: true
     <<: *rails_common
   worker:
     <<: *rails_common
