@@ -7,21 +7,22 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            絵
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            未分類のツィート
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="/tweets">みんなのタイムライン</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            分類済みのツィート
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="/tweets?classification=sulemio">スレミオ</a></li>
-            <li><a class="dropdown-item" href="/tweets?classification=other">スレミオ以外</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/tweets">未分類</a></li>
+            <li><a class="dropdown-item" href="/tweets?classification=suletta">スレッタ</a></li>
+            <li><a class="dropdown-item" href="/tweets?classification=miorine">ミオリネ</a></li>
           </ul>
-        </li>
-        <li class="nav-item">
-          <%= link_to "ネタ", tweets_path, {class: "nav-link"} %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "ツィートを追加", new_tweet_path, {class: "nav-link"} %>
         </li>
       </ul>
 
