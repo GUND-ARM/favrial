@@ -1,13 +1,13 @@
 <% if @classification %>
   <% if @classification == Tweet::Classification::SULEMIO %>
-    <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;</h1>
+    <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;の画像投稿</h1>
   <% elsif @classification == Tweet::Classification::SULETTA %>
-    <h1 class="mt-4 mb-3">スレッタ&#x1f99d;</h1>
+    <h1 class="mt-4 mb-3">スレッタ&#x1f99d;の画像投稿</h1>
   <% elsif @classification == Tweet::Classification::MIORINE %>
-    <h1 class="mt-4 mb-3">ミオリネ&#x1f345;</h1>
+    <h1 class="mt-4 mb-3">ミオリネ&#x1f345;の画像投稿</h1>
   <% end %>
 <% else %>
-  <h1 class="mt-4 mb-3">未分類の絵</h1>
+  <h1 class="mt-4 mb-3">みんなのタイムライン（未分類の画像投稿）</h1>
 <% end %>
 
 <p><%= @tweets.total_count %> のツィート</p>
