@@ -16,6 +16,7 @@
 <div id="tweets"
      class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-5"
      data-controller="pagination"
+     data-action="scroll@document->pagination#scroll"
      data-pagination-url-value="<%= tweets_path %>"
      data-pagination-classification-value="<%= @classification %>"
      data-pagination-page-value="<%= @tweets.next_page %>" >

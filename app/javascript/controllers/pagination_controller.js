@@ -26,8 +26,6 @@ export default class extends Controller {
       console.log("turbo:frame-load");
       twttr.widgets.load();
     });
-
-    document.addEventListener("scroll", this.scroll);
   }
 
   scroll() {
