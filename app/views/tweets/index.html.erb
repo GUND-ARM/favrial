@@ -1,9 +1,10 @@
 <% if @classification %>
   <% if @classification == Tweet::Classification::SULEMIO %>
-    <h1 class="mt-4 mb-3">スレミオの絵</h1>
-    <!-- <p class="lead">スレミオ判別済みの絵</p> -->
-  <% else %>
-    <h1 class="mt-4 mb-3">スレミオ以外の絵</h1>
+    <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;</h1>
+  <% elsif @classification == Tweet::Classification::SULETTA %>
+    <h1 class="mt-4 mb-3">スレッタ&#x1f99d;</h1>
+  <% elsif @classification == Tweet::Classification::MIORINE %>
+    <h1 class="mt-4 mb-3">ミオリネ&#x1f345;</h1>
   <% end %>
 <% else %>
   <h1 class="mt-4 mb-3">未分類の絵</h1>
