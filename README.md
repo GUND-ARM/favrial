@@ -19,6 +19,12 @@
 ./docker_compose up
 ```
 
+`debugger` を使う
+
+```sh
+docker attach docker attach favrial-web-1
+```
+
 ## バックアップ
 
 ```sh
