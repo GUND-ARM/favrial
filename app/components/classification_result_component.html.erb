@@ -1,11 +1,7 @@
 <div class="alert alert-secondary mb-0">
   <% if @tweet.slemio? %>
     このツィートは<strong>スレミオ</strong>だ。私がそう判断した
-  <% elsif @tweet.suletta? %>
-    このツィートは<strong>スレッタ</strong>だ。私がそう判断した
-  <% elsif @tweet.miorine? %>
-    このツィートは<strong>ミオリネ</strong>だ。私がそう判断した
   <% else %>
-    このツィートはスレミオ/スレッタ/ミオリネの<strong>いずれでもない。</strong>私がそう判断した
+    このツィートはスレミオ<strong>ではない</strong>。私がそう判断した
   <% end %>
 </div>

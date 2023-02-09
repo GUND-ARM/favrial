@@ -14,17 +14,9 @@
           <div class="row align-items-end">
             <div class="col">
               <% if tweet.classification %>
-                <% if tweet.slemio? %>
-                  <p>このツィートは<strong>スレミオ</strong>だ。私がそう判断した</p>
-                <% elsif tweet.suletta? %>
-                  <p>このツィートは<strong>スレッタ</strong>だ。私がそう判断した</p>
-                <% elsif tweet.miorine? %>
-                  <p>このツィートは<strong>ミオリネ</strong>だ。私がそう判断した</p>
-                <% else %>
-                  <p>このツィートはスレミオ/スレッタ/ミオリネの<strong>いずれでもない。</strong>私がそう判断した</p>
-                <% end %>
+                <%= render( ClassificationResultComponent.new(tweet) ) %>
               <% else %>
-                <%= render(ActionButtonComponent.new(tweet: tweet) ) %>
+                <%= render( ActionButtonComponent.new(tweet: tweet) ) %>
               <% end %>
             </div>
           </div>

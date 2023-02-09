@@ -27,7 +27,8 @@ class Tweet < ApplicationRecord
       :SULETTA,  # スレッタ単体
       :MIORINE,  # ミオリネ単体
       :SULEMIO,  # スレミオ
-      :OTHER     # それ以外
+      :OTHER,     # それ以外
+      :NOTSULEMIO # スレミオではない
       #:WITHHOLD, # 判断を保留する（心がふたつあるんじゃ）
     ].each do |k|
       const_set(k, k.to_s.downcase.freeze)
