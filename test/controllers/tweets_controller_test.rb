@@ -3,6 +3,7 @@ require "test_helper"
 class TweetsControllerTest < ActionDispatch::IntegrationTest
   setup do
     use_omniauth
+    # FIXME: これだと first_media_url が nil になってしまう
     @tweet = Tweet.find_or_create_with(
       tweet_hash: tweet_hash_with_media,
       media_type: Tweet::MediaType::PHOTO
