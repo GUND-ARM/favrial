@@ -1,16 +1,20 @@
 <% if @classification %>
   <% if @classification == Tweet::Classification::SULEMIO %>
     <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;の画像投稿</h1>
+    <p>みんなでスレミオだと判断した画像ツィートです</p>
   <% elsif @classification == Tweet::Classification::SULETTA %>
     <h1 class="mt-4 mb-3">スレッタ&#x1f99d;の画像投稿</h1>
+    <p>みんなでスレッタだと判断した画像ツィートです</p>
   <% elsif @classification == Tweet::Classification::MIORINE %>
     <h1 class="mt-4 mb-3">ミオリネ&#x1f345;の画像投稿</h1>
+    <p>みんなでミオリネだと判断した画像ツィートです</p>
   <% end %>
 <% else %>
   <h1 class="mt-4 mb-3">みんなのタイムライン（未分類の画像投稿）</h1>
+  <p>みんなのTLに流れてきたすべての画像ツィートのうち、未分類のものです</p>
 <% end %>
 
-<p><%= @tweets.total_count %> のツィート</p>
+<p><%= @tweets.total_count %> ツィート</p>
 
 <%= turbo_frame_tag "page_handler" %>
 <div id="tweets"
