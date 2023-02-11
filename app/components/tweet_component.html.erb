@@ -4,10 +4,12 @@
     <%= image_tag @tweet.first_media_url, class: "card-img-top", style: "height: 300px; object-fit: cover;" %>
   <% end %>
   <div class="card-body d-flex flex-column">
-    <h5 class="card-title"><%= @name %></h5>
+    <!-- FIXME: ユーザ名が取得できるようになったら表示する -->
+    <!-- <h5 class="card-title"><%= @name %></h5> -->
     <p class="card-text"><%= @tweet.body %></p>
 
     <div class="mt-auto">
+      <p class="text-end mb-4"><small><a class="text-decoration-none" href="<%= @tweet.url %>" target="_blank"><i class="bi bi-twitter"></i>&nbsp;Twitterで見る&nbsp;<i class="bi bi-box-arrow-up-right"></i></small></a></p>
       <% if @tweet.classification %>
         <%= render(ClassificationResultComponent.new(@tweet)) %>
       <% else %>
