@@ -5,7 +5,7 @@ from PIL import Image, ImageOps  # Install pillow instead of PIL
 import numpy as np
 from flask import Flask, jsonify, request
 
-def predict(model, class_names, image):
+def predict(model, image):
     # Disable scientific notation for clarity
     np.set_printoptions(suppress=True)
 
@@ -46,7 +46,7 @@ app = Flask(__name__)
 def index():
     image_url = request.args.get("image_url")
     image = Image.open(io.BytesIO(requests.get(image_url).content)).convert("RGB")
-    index, score = predict(model, class_names, image)
+    index, score = predict(model, image)
     class_name = class_names[index][2:].strip()
     data = {
             "class_name": class_name,
