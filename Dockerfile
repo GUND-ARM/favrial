@@ -8,7 +8,7 @@ ENV RAILS_LOG_TO_STDOUT="1"
 
 RUN apt-get -y update && \
     apt-get -y upgrade && \
-    apt-get -y install libpq5 libvips42 build-essential libpq-dev git curl && \
+    apt-get -y install libpq5 libvips42 build-essential libpq-dev git curl python3-pip && \
     apt-get clean
 
 # install nodejs
@@ -18,6 +18,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
 
 # enable yarn
 RUN corepack enable
+
+# TensorflowとKerasのインストール
+RUN pip install --upgrade pip && pip install tensorflow keras pillow Flask
 
 WORKDIR ${APPROOT}
 COPY Gemfile ${APPROOT}

@@ -32,6 +32,11 @@ services:
       QUEUE: default
       VERBOSE: 1
     command: bin/bundle exec sidekiq
+  ml:
+    build:
+      *rails_build
+    command: flask --app ml/main run --host=0.0.0.0 --port=5080
+    stop_signal: SIGINT
   redis:
     image: redis
   db:

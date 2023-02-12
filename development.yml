@@ -14,6 +14,10 @@ services:
     <<: *rails_common
   worker:
     <<: *rails_common
+  ml:
+    ports:
+      - 127.0.0.1:5080:5080
+    <<: *rails_common
   js:
     command: yarn build --watch
     tty: true
