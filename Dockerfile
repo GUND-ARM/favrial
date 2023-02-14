@@ -20,7 +20,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
 RUN corepack enable
 
 # TensorflowとKerasのインストール
-RUN pip install --upgrade pip && pip install tensorflow keras pillow Flask
+# FIXME: tensorflow==2.11 だとメモリリークする
+#RUN pip install --upgrade pip && pip install tensorflow keras pillow Flask
+RUN pip install --upgrade pip && pip install tensorflow==2.10 keras pillow Flask
 
 WORKDIR ${APPROOT}
 COPY Gemfile ${APPROOT}

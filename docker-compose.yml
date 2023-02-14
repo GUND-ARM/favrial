@@ -35,6 +35,8 @@ services:
   ml:
     build:
       *rails_build
+    environment:
+      TF_RUN_EAGER_OP_AS_FUNCTION: false
     command: flask --app ml/main run --host=0.0.0.0 --port=5080
     stop_signal: SIGINT
   redis:

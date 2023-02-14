@@ -5,6 +5,13 @@ from PIL import Image, ImageOps  # Install pillow instead of PIL
 import numpy as np
 from flask import Flask, jsonify, request
 
+# メモリリーク検証用
+#import sys
+#import tracemalloc
+
+# メモリリーク検証用
+#tracemalloc.start()
+
 def predict(model, image):
     # Disable scientific notation for clarity
     np.set_printoptions(suppress=True)
@@ -28,7 +35,9 @@ def predict(model, image):
     data[0] = normalized_image_array
 
     # Predicts the model
-    prediction = model.predict(data)
+    # FIXME: model.predict() だとメモリリークする. 対策したが完全ではない
+    #prediction = model.predict(data)
+    prediction = model(data)
     index = np.argmax(prediction)
     confidence_score = prediction[0][index]
 
@@ -53,3 +62,14 @@ def index():
             "score": float(score)
     }
     return jsonify(data)
+
+# メモリリーク検証用
+#@app.route('/tm')
+#def tm():
+#    snapshot = tracemalloc.take_snapshot()
+#    top_stats = snapshot.statistics('lineno')
+#    for stat in top_stats[:10]:
+#        print(stat)
+#    print("")
+#    sys.stdout.flush()
+#    return "ok"
