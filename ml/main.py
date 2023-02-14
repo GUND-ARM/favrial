@@ -44,7 +44,7 @@ def predict(model, image):
     return index, confidence_score
 
 # Load the model
-model = load_model("./ml/keras_Model.h5", compile=False)
+model = load_model("./ml/keras_model.h5", compile=False)
 
 # Load the labels
 class_names = open("./ml/labels.txt", "r").readlines()
