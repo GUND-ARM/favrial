@@ -1,10 +1,14 @@
 class TweetPolicy < ApplicationPolicy
   def index?
-    true
+    user.present?
   end
 
   def show?
-    true
+    user.present?
+  end
+
+  def new?
+    false
   end
 
   def edit?
