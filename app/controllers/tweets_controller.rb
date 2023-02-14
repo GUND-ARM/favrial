@@ -5,22 +5,28 @@ class TweetsController < ApplicationController
 
   # GET /tweets or /tweets.json
   def index
-    @classification = params[:classification]
-    @tweets = if @classification
-                Tweet.classified_with_photo(@classification).page(params[:page])
-              else
-                Tweet.unclassified_with_photo.page(params[:page])
-              end
+    if current_user
+      @classification = params[:classification]
+      @tweets = if @classification
+                  Tweet.classified_with_photo(@classification).page(params[:page])
+                else
+                  Tweet.unclassified_with_photo.page(params[:page])
+                end
+    else
+      redirect_to welcome_url
+    end
   end
 
   # GET /tweets/1 or /tweets/1.json
   def show
+    authorize @tweet
   end
 
   # GET /tweets/new
   def new
     # FIXME: ツィートの手動追加は後ほど実装する
     @tweet = Tweet.new
+    authorize @tweet
   end
 
   # GET /tweets/1/edit
@@ -85,10 +91,5 @@ class TweetsController < ApplicationController
   # 許可するパラメーターのリスト
   def tweet_params
     params.require(:tweet).permit(:classification)
-  end
-
-  # punditで認可に失敗した場合に呼び出される
-  def user_not_authorized
-    head :forbidden
   end
 end

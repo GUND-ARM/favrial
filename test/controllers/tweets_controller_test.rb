@@ -10,14 +10,27 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
     )
   end
 
+  test "should not get index without login" do
+    get tweets_url
+    assert_response :redirect
+  end
+
   test "should get index" do
+    login
     get tweets_url
     assert_response :success
   end
 
-  test "should get new" do
+  test "should not get new without login" do
     get new_tweet_url
-    assert_response :success
+    assert_response :forbidden
+  end
+
+  test "should not get new" do
+    login
+    get new_tweet_url
+    # FIXME: ツィートの手動追加を実装したらテストも修正する
+    assert_response :forbidden
   end
 
   # FIXME: ツィートの手動追加を実装するときにテストも修正する
@@ -37,9 +50,20 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
+  test "should not show tweet without login" do
+    get tweet_url(@tweet)
+    assert_response :forbidden
+  end
+
   test "should show tweet" do
+    login
     get tweet_url(@tweet)
     assert_response :success
+  end
+
+  test "should not get edit without login" do
+    get edit_tweet_url(@tweet)
+    assert_response :forbidden
   end
 
   test "should get edit with login" do
@@ -48,8 +72,12 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should not get edit without login" do
-    get edit_tweet_url(@tweet)
+  test "should not update tweet without login" do
+    patch tweet_url(@tweet), params: {
+      tweet: {
+        classification: @tweet.classification
+      }
+    }
     assert_response :forbidden
   end
 
@@ -61,15 +89,6 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
       }
     }
     assert_redirected_to tweet_url(@tweet)
-  end
-
-  test "should not update tweet without login" do
-    patch tweet_url(@tweet), params: {
-      tweet: {
-        classification: @tweet.classification
-      }
-    }
-    assert_response :forbidden
   end
 
   # FIXME: ツィートの削除を実装したときにテストも修正する

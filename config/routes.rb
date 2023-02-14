@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
   root "tweets#index"
+
   resources :users
   resources :tweets
 
+  get '/welcome', to: 'welcome#index'
   get '/auth/:provider/callback', to: 'sessions#create'
   get '/logout', to: 'sessions#destroy'
 
