@@ -38,3 +38,5 @@
 /.irb_history
 /.env
 /production.env
+
+**/__pycache__/
