@@ -3,6 +3,11 @@ class FetchTimelineJob < ApplicationJob
 
   def perform(count = 10)
     User.all.each do |user|
+      if user.credential.nil?
+        Rails.logger.info("Skipping @#{user.username} because they have no credentials")
+        next
+      end
+
       Rails.logger.info("Fetching timeline for @#{user.username}")
       begin
         user.fetch_reverse_chronological_timelines(count)
