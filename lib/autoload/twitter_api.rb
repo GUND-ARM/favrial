@@ -110,7 +110,11 @@ module TwitterAPI
     end
 
     def included_tweets
-      includes[:tweets]
+      if includes && includes[:tweets]
+        includes[:tweets]
+      else
+        []
+      end
     end
 
     def included_media
