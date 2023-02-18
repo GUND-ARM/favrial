@@ -2,12 +2,17 @@
 #
 # Table name: users
 #
-#  id         :bigint           not null, primary key
-#  username   :string
-#  name       :string
-#  uid        :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id                :bigint           not null, primary key
+#  username          :string
+#  name              :string
+#  uid               :string
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  protected         :boolean
+#  location          :string
+#  url               :string
+#  description       :string
+#  profile_image_url :string
 #
 require "test_helper"
 
