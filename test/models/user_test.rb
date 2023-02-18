@@ -28,4 +28,25 @@ class UserTest < ActiveSupport::TestCase
     id_2 = u.credential.id
     assert_not_equal id_1, id_2
   end
+
+  test "APIレスポンスのHashからユーザを新規作成できる" do
+    assert User.find_or_create_from_api_response(user1_hash)
+    assert User.find_or_create_from_api_response(user2_hash)
+  end
+
+  test "APIレスポンスのHashの配列から複数のユーザを新規作成できる" do
+    assert User.find_or_create_many_from_api_response(user_hashes)
+  end
+
+  test "APIレスポンスのHashからユーザを新規作成したとき、各カラムが正しく設定される" do
+    u = User.find_or_create_from_api_response(user2_hash)
+    assert_equal u.uid, user2_hash[:id]
+    assert_equal u.name, user2_hash[:name]
+    assert_equal u.username, user2_hash[:username]
+    assert_equal u.protected, user2_hash[:protected]
+    assert_equal u.location, user2_hash[:location]
+    assert_equal u.url, user2_hash[:url]
+    assert_equal u.description, user2_hash[:description]
+    assert_equal u.profile_image_url, user2_hash[:profile_image_url]
+  end
 end
