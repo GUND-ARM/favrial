@@ -104,6 +104,70 @@ class ActiveSupport::TestCase
     }
   end
 
+  def user_hashes
+    [user1_hash, user2_hash]
+  end
+
+  def user1_hash
+    {
+      "location" => "GUND-ARM inc.",
+      "description" => "スレミオの画像を集めます",
+      "created_at" => "2023-02-08T18:28:25.000Z",
+      "username" => "GUNDBIT01",
+      "profile_image_url" => "https://pbs.twimg.com/profile_images/1623390499745959936/JitlmyQn_normal.jpg",
+      "name" => "GUNDBIT 01",
+      "id" => "1623388250793713664",
+      "verified" => false,
+      "protected" => false,
+      "public_metrics" => {
+        "followers_count" => 1,
+        "following_count" => 91,
+        "tweet_count" => 1,
+        "listed_count" => 0
+      }
+    }.deep_symbolize_keys
+  end
+
+  def user2_hash
+    {
+      "location" => "GUND-ARM inc.",
+      "description" => "スレミオの絵をふぁぼる/スレミオ決闘委員会（仮）/創作イタリアンカフェ地球寮/スレミオ社会構成主義/公益社団法人フロント管理者ヅラオタク協会/スレミオキャピタル（投資事業有限責任組合スレミオ1号ファンド）/うるさいオタクです遠慮なく引用RTしてください/リコリコ関連はこっち→ @recoryco",
+      "created_at" => "2022-10-28T08:38:04.000Z",
+      "username" => "witchandtrophy",
+      "profile_image_url" => "https://pbs.twimg.com/profile_images/1587357812614516737/G0LrRMe7_normal.jpg",
+      "entities" => {
+        "url" => {
+          "urls" => [
+            {
+              "start" => 0,
+              "end" => 23,
+              "url" => "https://t.co/e8lk5j66Ch",
+              "expanded_url" => "https://scrapbox.io/SuleMio/",
+              "display_url" => "scrapbox.io/SuleMio/"
+            }
+          ]
+        },
+        "description" => {
+          "mentions" => [
+            { "start" => 139, "end" => 148, "username" => "recoryco" }
+          ]
+        }
+      },
+      "name" => "🦝🍅の絵をふぁぼる",
+      "id" => "1585913733750042624",
+      "pinned_tweet_id" => "1623304195054125056",
+      "verified" => false,
+      "protected" => false,
+      "url" => "https://t.co/e8lk5j66Ch",
+      "public_metrics" => {
+        "followers_count" => 166,
+        "following_count" => 115,
+        "tweet_count" => 9031,
+        "listed_count" => 2
+      }
+    }.deep_symbolize_keys
+  end
+
   def use_omniauth(h=auth_hash)
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[:twitter2] = h
