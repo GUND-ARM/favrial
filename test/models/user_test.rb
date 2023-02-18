@@ -54,4 +54,20 @@ class UserTest < ActiveSupport::TestCase
     assert_equal u.description, user2_hash[:description]
     assert_equal u.profile_image_url, user2_hash[:profile_image_url]
   end
+
+  test "userは複数のtweetを持つ" do
+    uid = "123456789"
+    u = User.new(
+      uid: uid,
+      name: "test",
+      username: "test",
+      description: "test",
+      protected: false
+    )
+    u.tweets << tweets(:one)
+    u.tweets << tweets(:two)
+    u.save
+    assert u.persisted?
+    assert_equal User.find_by(uid: uid).tweets.count, 2
+  end
 end
