@@ -10,8 +10,8 @@ module TwitterAPI
 
     # @param [String] token アクセストークン
     # @param [Array<String>] user_ids ユーザーIDの配列
-    def self.get_users(token, user_ids)
-      new(token).get_users(user_ids)
+    def self.users(token, user_ids)
+      new(token).users(user_ids)
     end
 
     # @param [String] token アクセストークン
@@ -54,9 +54,12 @@ module TwitterAPI
       @token = token
     end
 
+    # idsで指定したユーザーの情報を取得する
+    #   - ユーザーIDは最大100個まで指定可能
+    #
     # @param [Array<String>] ids ユーザーIDの配列
     # @return [Hash] APIレスポンスのハッシュ
-    def get_users(ids)
+    def users(ids)
       res = api_access(
         path: '/2/users',
         params: users_params(ids)
