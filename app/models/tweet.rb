@@ -78,6 +78,8 @@ class Tweet < ApplicationRecord
     end
   end
 
+  belongs_to :user, optional: true
+
   validates :t_id, uniqueness: true
 
   attribute :classified, default: false

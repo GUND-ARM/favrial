@@ -15,12 +15,18 @@
 #  profile_image_url :string
 #
 
-#one:
-#  screen_name: MyString
-#  name: MyString
-#  t_id: MyString
-#
-#two:
-#  screen_name: MyString
-#  name: MyString
-#  t_id: MyString
+# 通常アカウント
+one:
+  uid: "5678901011"
+  username: "user1"
+  name: "User One"
+  description: "This is a test account 1."
+  protected: false
+
+# 鍵アカウント
+two:
+  uid: "6789101112"
+  username: "user2"
+  name: "User Two"
+  description: "This is a test account 2."
+  protected: true

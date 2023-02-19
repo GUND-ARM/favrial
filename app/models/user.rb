@@ -16,6 +16,7 @@
 #
 class User < ApplicationRecord
   has_one :credential, dependent: :destroy
+  has_many :tweets
 
   validates :uid, presence: true
   validates :name, presence: true

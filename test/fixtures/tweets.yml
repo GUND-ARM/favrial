@@ -15,20 +15,20 @@
 #  first_media_url :string
 #
 
-#one:
-#  t_id: MyString
-#  body: MyText
-#  url: MyString
-#  raw_json: MyText
-#  type: 
-#  classification: MyString
-#  classified: false
-#
-#two:
-#  t_id: MyString
-#  body: MyText
-#  url: MyString
-#  raw_json: MyText
-#  type: 
-#  classification: MyString
-#  classified: false
+one:
+  t_id: "1234567890"
+  body: "This is one"
+  url: "https://twitter.com/username/status/1234567890"
+  raw_json: "{'key': 'value'}"
+  media_type: "photo"
+  classification: "sulemio"
+  classified: true
+
+two:
+  t_id: "9876543210"
+  body: "This is two"
+  url: "https://twitter.com/username/status/0987654321"
+  raw_json: "{'key': 'value'}"
+  media_type: "photo"
+  classification: "notsulemio"
+  classified: true
