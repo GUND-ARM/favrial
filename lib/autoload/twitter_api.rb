@@ -1,11 +1,11 @@
 module TwitterAPI
   class Client
-    def self.get_user_me(user)
-      case user
-      in User
-        credential = user.credential
-        return TwitterAPI::Client.api_access(credential: credential, path: '/2/users/me')
-      end
+    # tokenの所有者であるユーザの情報を取得する
+    #
+    # @param [String] token アクセストークン
+    # @return [Hash] APIレスポンスのハッシュ
+    def self.users_me(token)
+      new(token).users_me
     end
 
     # @param [String] token アクセストークン
@@ -52,6 +52,17 @@ module TwitterAPI
 
     def initialize(token)
       @token = token
+    end
+
+    # tokenの所有者であるユーザの情報を取得する
+    #
+    # @return [Hash] APIレスポンスのハッシュ
+    def users_me
+      res = api_access(
+        path: '/2/users/me',
+        params: user_params
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
     end
 
     # idsで指定したユーザーの情報を取得する
