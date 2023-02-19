@@ -20,6 +20,9 @@ module TwitterAPI
       new(token).tweets(tweet_ids)
     end
 
+    # @param [User] user APIアクセスするユーザー
+    # @param [String] pagination_token ページネーショントークン
+    # @return [TweetsResponse] ツィートのレスポンス
     def self.fetch_timelines_reverse_chronological(user, pagination_token = nil)
       params = Client.params_for_fetch_timelines_reverse_chronological(pagination_token)
       res = Client.api_access(
