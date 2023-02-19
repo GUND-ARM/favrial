@@ -24,6 +24,7 @@ module TwitterAPI
     # @param [String] pagination_token ページネーショントークン
     # @return [TweetsResponse] ツィートのレスポンス
     def self.fetch_timelines_reverse_chronological(user, pagination_token = nil)
+      warn "DEPRECATED: use TwitterAPI::Client.users_timelines_reverse_chronological"
       params = Client.params_for_fetch_timelines_reverse_chronological(pagination_token)
       res = Client.api_access(
         credential: user.credential,
@@ -47,6 +48,13 @@ module TwitterAPI
         params['pagination_token'] = pagination_token
       end
       return params
+    end
+
+    # @param [String] token アクセストークン
+    # @param [String] uid このユーザーのタイムラインを取得する
+    # @param [String] pagination_token ページネーショントークン
+    def self.users_timelines_reverse_chronological(token, uid, pagination_token = nil)
+      new(token).users_timelines_reverse_chronological(uid, pagination_token)
     end
 
     def self.api_access(credential:, path:, params: nil)
@@ -87,6 +95,16 @@ module TwitterAPI
       res = api_access(
         path: '/2/tweets',
         params: tweets_params(ids)
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
+    end
+
+    # @param [String] uid このユーザーのタイムラインを取得する
+    # @param [String] pagination_token ページネーショントークン
+    def users_timelines_reverse_chronological(uid, pagination_token = nil)
+      res = api_access(
+        path: "/2/users/#{uid}/timelines/reverse_chronological",
+        params: users_timelines_reverse_chronological_params(pagination_token)
       )
       return JSON.parse(res.body).deep_symbolize_keys
     end
@@ -152,6 +170,18 @@ module TwitterAPI
         'expansions' => 'referenced_tweets.id,attachments.media_keys',
         'media.fields' => 'type,preview_image_url,url'
       }
+    end
+
+    def users_timelines_reverse_chronological_params(pagination_token)
+      params = {
+        'tweet.fields' => 'text,referenced_tweets,attachments',
+        'expansions' => 'referenced_tweets.id,attachments.media_keys',
+        'media.fields' => 'type,preview_image_url,url'
+      }
+      if pagination_token
+        params['pagination_token'] = pagination_token
+      end
+      return params
     end
   end
 
