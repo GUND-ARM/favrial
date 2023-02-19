@@ -112,14 +112,18 @@ module TwitterAPI
       return req
     end
 
-    # @param [Array<String>] ids ユーザーIDの配列
     # @return [Hash] APIリクエストのパラメータ
-    def users_params(ids)
+    def user_params
       {
-        'ids' => ids.join(','),
         'user.fields' => 'created_at,description,entities,id,location,name,' \
         'pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld'
       }
+    end
+
+    # @param [Array<String>] ids ユーザーIDの配列
+    # @return [Hash] APIリクエストのパラメータ
+    def users_params(ids)
+      user_params.merge({ 'ids' => ids.join(',') })
     end
 
     # @param [Array<String>] ids ツィートIDの配列
