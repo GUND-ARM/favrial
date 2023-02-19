@@ -51,13 +51,18 @@ module TwitterAPI
     end
 
     def self.api_access(credential:, path:, params: nil)
-      client = Client.new(credential)
-      res = client.get(path, params)
-      return res
+      return Client.new(credential.token).api_access(path: path, params: params)
     end
 
     def initialize(token)
       @token = token
+    end
+
+    # @param [String] path APIのパス
+    # @param [Hash] params APIリクエストのパラメータ
+    def api_access(path:, params: nil)
+      res = get(path, params)
+      return res
     end
 
     def get(path, params = nil, retry: 1)
