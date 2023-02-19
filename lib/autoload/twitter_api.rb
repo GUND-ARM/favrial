@@ -8,20 +8,10 @@ module TwitterAPI
       end
     end
 
-    def self.get_users(user, user_ids)
-      case user
-      in User
-        credential = user.credential
-        res = TwitterAPI::Client.api_access(
-          credential: credential,
-          path: '/2/users',
-          params: {
-            'ids' => user_ids.join(','),
-            'user.fields' => 'created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld'
-          }
-        )
-        return JSON.parse(res.body).deep_symbolize_keys
-      end
+    # @param [String] token アクセストークン
+    # @param [Array<String>] user_ids ユーザーIDの配列
+    def self.get_users(token, user_ids)
+      new(token).get_users(user_ids)
     end
 
     def self.fetch_timelines_reverse_chronological(user, pagination_token = nil)
@@ -56,6 +46,16 @@ module TwitterAPI
 
     def initialize(token)
       @token = token
+    end
+
+    # @param [Array<String>] ids ユーザーIDの配列
+    # @return [Hash] APIレスポンスのハッシュ
+    def get_users(ids)
+      res = api_access(
+        path: '/2/users',
+        params: users_params(ids)
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
     end
 
     # @param [String] path APIのパス
@@ -94,6 +94,16 @@ module TwitterAPI
       req['Authorization'] = "Bearer #{@token}"
       req['Content-type'] = 'application/json'
       return req
+    end
+
+    # @param [Array<String>] ids ユーザーIDの配列
+    # @return [Hash] APIリクエストのパラメータ
+    def users_params(ids)
+      {
+        'ids' => ids.join(','),
+        'user.fields' => 'created_at,description,entities,id,location,name,' \
+        'pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld'
+      }
     end
   end
 
