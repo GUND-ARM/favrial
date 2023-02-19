@@ -16,8 +16,8 @@ module TwitterAPI
 
     # @param [String] token アクセストークン
     # @param [Array<String>] tweet_ids ツィートIDの配列
-    def self.get_tweets(token, tweet_ids)
-      new(token).get_tweets(tweet_ids)
+    def self.tweets(token, tweet_ids)
+      new(token).tweets(tweet_ids)
     end
 
     def self.fetch_timelines_reverse_chronological(user, pagination_token = nil)
@@ -66,7 +66,7 @@ module TwitterAPI
 
     # @param [Array<String>] ids ツィートIDの配列
     # @return [Hash] APIレスポンスのハッシュ
-    def get_tweets(ids)
+    def tweets(ids)
       res = api_access(
         path: '/2/tweets',
         params: tweets_params(ids)
