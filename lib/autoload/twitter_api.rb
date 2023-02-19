@@ -56,8 +56,8 @@ module TwitterAPI
       return res
     end
 
-    def initialize(credential)
-      @credential = credential
+    def initialize(token)
+      @token = token
     end
 
     def get(path, params = nil, retry: 1)
@@ -86,7 +86,7 @@ module TwitterAPI
 
     def build_get_request(uri)
       req = Net::HTTP::Get.new(uri.to_s)
-      req['Authorization'] = "Bearer #{@credential.token}"
+      req['Authorization'] = "Bearer #{@token}"
       req['Content-type'] = 'application/json'
       return req
     end
