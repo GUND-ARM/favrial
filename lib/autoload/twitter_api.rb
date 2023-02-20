@@ -1,30 +1,30 @@
 module TwitterAPI
   class Client
-    def self.get_user_me(user)
-      case user
-      in User
-        credential = user.credential
-        return TwitterAPI::Client.api_access(credential: credential, path: '/2/users/me')
-      end
+    # tokenの所有者であるユーザの情報を取得する
+    #
+    # @param [String] token アクセストークン
+    # @return [Hash] APIレスポンスのハッシュ
+    def self.users_me(token)
+      new(token).users_me
     end
 
-    def self.get_users(user, user_ids)
-      case user
-      in User
-        credential = user.credential
-        res = TwitterAPI::Client.api_access(
-          credential: credential,
-          path: '/2/users',
-          params: {
-            'ids' => user_ids.join(','),
-            'user.fields' => 'created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld'
-          }
-        )
-        return JSON.parse(res.body).deep_symbolize_keys
-      end
+    # @param [String] token アクセストークン
+    # @param [Array<String>] user_ids ユーザーIDの配列
+    def self.users(token, user_ids)
+      new(token).users(user_ids)
     end
 
+    # @param [String] token アクセストークン
+    # @param [Array<String>] tweet_ids ツィートIDの配列
+    def self.tweets(token, tweet_ids)
+      new(token).tweets(tweet_ids)
+    end
+
+    # @param [User] user APIアクセスするユーザー
+    # @param [String] pagination_token ページネーショントークン
+    # @return [TweetsResponse] ツィートのレスポンス
     def self.fetch_timelines_reverse_chronological(user, pagination_token = nil)
+      warn "DEPRECATED: use TwitterAPI::Client.users_timelines_reverse_chronological"
       params = Client.params_for_fetch_timelines_reverse_chronological(pagination_token)
       res = Client.api_access(
         credential: user.credential,
@@ -50,14 +50,70 @@ module TwitterAPI
       return params
     end
 
-    def self.api_access(credential:, path:, params: nil)
-      client = Client.new(credential)
-      res = client.get(path, params)
-      return res
+    # @param [String] token アクセストークン
+    # @param [String] uid このユーザーのタイムラインを取得する
+    # @param [String] pagination_token ページネーショントークン
+    def self.users_timelines_reverse_chronological(token, uid, pagination_token = nil)
+      new(token).users_timelines_reverse_chronological(uid, pagination_token)
     end
 
-    def initialize(credential)
-      @credential = credential
+    def self.api_access(credential:, path:, params: nil)
+      return Client.new(credential.token).api_access(path: path, params: params)
+    end
+
+    def initialize(token)
+      @token = token
+    end
+
+    # tokenの所有者であるユーザの情報を取得する
+    #
+    # @return [Hash] APIレスポンスのハッシュ
+    def users_me
+      res = api_access(
+        path: '/2/users/me',
+        params: user_params
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
+    end
+
+    # idsで指定したユーザーの情報を取得する
+    #   - ユーザーIDは最大100個まで指定可能
+    #
+    # @param [Array<String>] ids ユーザーIDの配列
+    # @return [Hash] APIレスポンスのハッシュ
+    def users(ids)
+      res = api_access(
+        path: '/2/users',
+        params: users_params(ids)
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
+    end
+
+    # @param [Array<String>] ids ツィートIDの配列
+    # @return [Hash] APIレスポンスのハッシュ
+    def tweets(ids)
+      res = api_access(
+        path: '/2/tweets',
+        params: tweets_params(ids)
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
+    end
+
+    # @param [String] uid このユーザーのタイムラインを取得する
+    # @param [String] pagination_token ページネーショントークン
+    def users_timelines_reverse_chronological(uid, pagination_token = nil)
+      res = api_access(
+        path: "/2/users/#{uid}/timelines/reverse_chronological",
+        params: users_timelines_reverse_chronological_params(pagination_token)
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
+    end
+
+    # @param [String] path APIのパス
+    # @param [Hash] params APIリクエストのパラメータ
+    def api_access(path:, params: nil)
+      res = get(path, params)
+      return res
     end
 
     def get(path, params = nil, retry: 1)
@@ -86,9 +142,46 @@ module TwitterAPI
 
     def build_get_request(uri)
       req = Net::HTTP::Get.new(uri.to_s)
-      req['Authorization'] = "Bearer #{@credential.token}"
+      req['Authorization'] = "Bearer #{@token}"
       req['Content-type'] = 'application/json'
       return req
+    end
+
+    # @return [Hash] APIリクエストのパラメータ
+    def user_params
+      {
+        'user.fields' => 'created_at,description,entities,id,location,name,' \
+        'pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld'
+      }
+    end
+
+    # @param [Array<String>] ids ユーザーIDの配列
+    # @return [Hash] APIリクエストのパラメータ
+    def users_params(ids)
+      user_params.merge({ 'ids' => ids.join(',') })
+    end
+
+    # @param [Array<String>] ids ツィートIDの配列
+    # @return [Hash] APIリクエストのパラメータ
+    def tweets_params(ids)
+      {
+        'ids' => ids.join(','),
+        'tweet.fields' => 'text,created_at,author_id,referenced_tweets,attachments,lang',
+        'expansions' => 'referenced_tweets.id,attachments.media_keys',
+        'media.fields' => 'type,preview_image_url,url'
+      }
+    end
+
+    def users_timelines_reverse_chronological_params(pagination_token)
+      params = {
+        'tweet.fields' => 'text,referenced_tweets,attachments',
+        'expansions' => 'referenced_tweets.id,attachments.media_keys',
+        'media.fields' => 'type,preview_image_url,url'
+      }
+      if pagination_token
+        params['pagination_token'] = pagination_token
+      end
+      return params
     end
   end
 
@@ -207,83 +300,6 @@ module TwitterAPI
       tweets.reject do |t|
         t in { referenced_tweets: [ {type: 'retweeted'} ] }
       end
-    end
-  end
-
-  class ResponseOperator
-    def initialize(response)
-      case response
-      in Hash
-        @response = response.with_indifferent_access
-      end
-    end
-
-    # APIレスポンスのハッシュから全ツィートを抜き出す
-    #   - retweetは除外する
-    #   - retweet元のツィートをincludesから拾って連結する
-    def bare_tweets
-      tweets = []
-
-      # data からツィートを追加
-      if @response in { data: Array => a }
-        tweets += a
-      end
-
-      # RTを除外
-      tweets.reject! do |t|
-        t in { referenced_tweets: [ {type: 'retweeted'} ] }
-      end
-
-      # includesからツィートを追加
-      if @response in { includes: { tweets: Array => a } }
-        tweets += a
-      end
-
-      return tweets
-    end
-
-    # tweetのメディアタイプを判別する
-    def media_type_for_tweet(tweet_hash)
-      medias = medias_for_tweet(tweet_hash)
-      case medias
-      in [ { type: 'photo' } ]
-        return Tweet::MediaType::PHOTO
-      else
-        return Tweet::MediaType::OTHER
-      end
-    end
-
-    # 1ツィートとAPIレスポンスを渡して、media_keyが一致するmediaを取得する
-    def medias_for_tweet(tweet_hash)
-      h = medias_hash
-      return media_keys(tweet_hash).map { |k| h[k] }
-    end
-
-    def media_keys(tweet_hash)
-      tweet_hash_s = tweet_hash.with_indifferent_access
-
-      keys = []
-      if tweet_hash_s in { attachments: { media_keys: Array => a } }
-        keys += a
-      end
-
-      return keys
-    end
-
-    # media_key をキーにしたHashを返す
-    def medias_hash
-      h = {}
-
-      if @response in { includes: { media: Array => a } }
-        h = a.map { |m| [m[:media_key], m] }.to_h
-      end
-
-      return h
-    end
-
-    # next_token を抜き出す
-    def next_token
-      @response[:meta][:next_token]
     end
   end
 end

@@ -61,8 +61,8 @@ class User < ApplicationRecord
 
   # Twitter APIからユーザ情報を更新する
   def self.update_from_twitter_api(access_user:, ids:)
-    twitter_ids = User.where(id: ids).pluck(:uid)
-    users_hash = TwitterAPI::Client.get_users(access_user, twitter_ids)
+    uids = User.where(id: ids).pluck(:uid)
+    users_hash = TwitterAPI::Client.users(access_user.credential.token, uids)
     User.find_or_create_many_from_api_response(users_hash[:data])
   end
 

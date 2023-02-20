@@ -40,7 +40,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "APIレスポンスのHashの配列から複数のユーザを新規作成できる" do
-    assert User.find_or_create_many_from_api_response(user_hashes)
+    users = User.find_or_create_many_from_api_response(user_hashes)
+    assert_equal users.length, user_hashes.length
   end
 
   test "APIレスポンスのHashからユーザを新規作成したとき、各カラムが正しく設定される" do
