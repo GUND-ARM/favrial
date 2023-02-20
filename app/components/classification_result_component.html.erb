@@ -1,6 +1,6 @@
-<div class="alert alert-secondary mb-0 px-2 py-0" style="height: 48px; line-height: 48px;">
+<div class="alert <%= @tweet.sulemio? ? "alert-primary" : "alert-secondary" %> mb-0 px-2 py-0" style="height: 48px; line-height: 48px;">
   <span class="d-inline-block text-truncate text-center w-100">
-    <% if @tweet.slemio? %>
+    <% if @tweet.sulemio? %>
       これは<strong>スレミオ</strong>だ。私が判断した
     <% else %>
       これはスレミオ<strong>ではない</strong>。私が判断した
