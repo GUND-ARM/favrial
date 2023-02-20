@@ -11,42 +11,13 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :t_id, style: "display: block" %>
-    <%= form.text_field :t_id %>
+  <div class="mt-3">
+    <%= form.label :classification, class: "form-label" %>
+    <%= form.select :classification, options_for_select([["スレミオ", "sulemio"], ["not ｽﾚﾐｵ", "notsulemio"]]), {}, { class: "form-select" } %>
   </div>
 
-  <div>
-    <%= form.label :body, style: "display: block" %>
-    <%= form.text_area :body %>
-  </div>
-
-  <div>
-    <%= form.label :url, style: "display: block" %>
-    <%= form.text_field :url %>
-  </div>
-
-  <div>
-    <%= form.label :raw_json, style: "display: block" %>
-    <%= form.text_area :raw_json %>
-  </div>
-
-  <div>
-    <%= form.label :type, style: "display: block" %>
-    <%= form.text_field :type %>
-  </div>
-
-  <div>
-    <%= form.label :classification, style: "display: block" %>
-    <%= form.text_field :classification %>
-  </div>
-
-  <div>
-    <%= form.label :classified, style: "display: block" %>
-    <%= form.check_box :classified %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+  <div class="mt-4">
+    <%= link_to "キャンセル", @tweet, class: "btn btn-secondary" %>
+    <%= form.submit "保存", class: "btn btn-primary" %>
   </div>
 <% end %>

@@ -103,7 +103,7 @@ class Tweet < ApplicationRecord
     self.url ||= "https://twitter.com/_/status/#{t_id}"
   end
 
-  def slemio?
+  def sulemio?
     classification == Classification::SULEMIO
   end
 
