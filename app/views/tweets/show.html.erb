@@ -1,12 +1,15 @@
 <p style="color: green"><%= notice %></p>
 
+<!-- <%= image_tag @tweet.first_media_url, class: "w-100 border" %>
+<p class="mt-3 mb-3"><%= @tweet.body %></p> -->
+
 <div class="mb-3">
   <%= render @tweet %>
 </div>
 <div>
-  <%= link_to "編集", edit_tweet_path(@tweet), class: "btn btn-secondary" %>
-  <hr>
+  <%= link_to "編集", edit_tweet_path(@tweet), class: "btn btn-primary" %>
 </div>
+<hr>
 <div class="mb-3">
-  <%= link_to "一覧に戻る", tweets_path, class: "btn btn-primary"%>
+  <%= link_to "一覧に戻る", tweets_path, class: "btn btn-secondary"%>
 </div>
