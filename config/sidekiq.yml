@@ -1,6 +1,6 @@
 :schedule:
   refresh_credential:
-    every: '5m'
+    every: '4m'
     class: RefreshCredentialJob
   fetch_timeline:
     every: '15m'
