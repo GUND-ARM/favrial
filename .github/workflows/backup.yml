@@ -1,0 +1,43 @@
+name: Backup
+
+on:
+  schedule:
+    - cron: '13 13 * * *'  # 日本時間で 4:13
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment:
+      name: favrial_production
+    steps:
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create ssh config
+      env:
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_HOSTNAME: ${{ secrets.SSH_HOSTNAME }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      run: |
+        mkdir ~/.ssh
+        echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+        echo "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts && chmod 600 ~/.ssh/known_hosts
+        cat > ~/.ssh/config <<EOF
+        Host favrial_production
+          HostName ${SSH_HOSTNAME}
+          User ${SSH_USER}
+        EOF
+    - name: Dump database
+      env:
+        SSH_HOST: favrial_production
+        COMPOSE_PROJECT_NAME: favrial
+      run: |
+        ./backup.sh
+    - name: Copy to GCS
+      run: gsutil cp favrial_production_*.dump gs://favrial_backup/
