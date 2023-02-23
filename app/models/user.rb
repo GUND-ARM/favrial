@@ -61,8 +61,20 @@ class User < ApplicationRecord
     User.find_or_create_by(uid: uid)
   end
 
+  # 新規追加されたユーザの情報をTwitter APIから取得して更新する
+  # 100件以上のユーザ情報を更新する場合は、100件ごとに分割して更新する
+  def self.bulk_update_new_users(access_user:)
+    User.where(username: nil).limit(1000).each_slice(100) do |users|
+      ids = users.map(&:id)
+      update_from_twitter_api(access_user: access_user, ids: ids)
+    end
+  end
+
   # Twitter APIからユーザ情報を更新する
   def self.update_from_twitter_api(access_user:, ids:)
+    raise ArgumentError, "ids must be an array" unless ids.is_a?(Array)
+    raise ArgumentError, "ids must not be empty" if ids.empty?
+    raise ArgumentError, "ids count must be up to 100" if ids.count > 100
     uids = User.where(id: ids).pluck(:uid)
     users_hash = TwitterAPI::Client.users(access_user.credential.token, uids)
     User.find_or_create_many_from_api_response(users_hash[:data])
@@ -80,10 +92,12 @@ class User < ApplicationRecord
 
   # ホームタイムラインをAPIアクセス1回分取得する
   def fetch_reverse_chronological_timeline(pagination_token)
-    tweets_response = TwitterAPI::Client.fetch_timelines_reverse_chronological(
-      self,
+    res = TwitterAPI::Client.users_timelines_reverse_chronological(
+      credential.token,
+      uid,
       pagination_token
     )
+    tweets_response = TwitterAPI::TweetsResponse.new(res)
     # FIXME: Copilotくんが save_tweets_from_api_response のほうがいいよって言ってた
     Tweet.create_many_from_api_response(tweets_response)
     return tweets_response

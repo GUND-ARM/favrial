@@ -2,12 +2,7 @@ class FetchTimelineJob < ApplicationJob
   queue_as :default
 
   def perform(count = 10)
-    User.all.each do |user|
-      if user.credential.nil?
-        Rails.logger.info("Skipping @#{user.username} because they have no credentials")
-        next
-      end
-
+    User.joins(:credential).each do |user|
       Rails.logger.info("Fetching timeline for @#{user.username}")
       begin
         user.fetch_reverse_chronological_timelines(count)
@@ -16,5 +11,8 @@ class FetchTimelineJob < ApplicationJob
         Rails.logger.error(e.backtrace.join("\n"))
       end
     end
+
+    users = User.joins(:credential)
+    User.bulk_update_new_users(access_user: users[rand(users.count)])
   end
 end
