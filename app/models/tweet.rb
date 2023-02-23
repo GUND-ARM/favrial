@@ -13,6 +13,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  first_media_url :string
+#  user_id         :bigint
 #
 class Tweet < ApplicationRecord
   # こんなかんじで定数の一覧がとれる
