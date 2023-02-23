@@ -41,7 +41,7 @@ class TweetTest < ActiveSupport::TestCase
   end
 
   test "APIレスポンスのJSON全体のHashから複数のレコードを作成できる" do
-    response = TwitterAPI::TweetsResponse.new(raw_reverse_chronological_response)
+    response = TwitterAPI::TweetsResponse.new(reverse_chronological_response)
     Tweet.create_many_from_api_response(response)
     tweet = Tweet.find_by(t_id: "1604509826498691073")
     assert_equal tweet.first_media_url, "https://pbs.twimg.com/media/FkRdIYgUYAE5q9N.jpg"
