@@ -2,12 +2,7 @@ class RefreshCredentialJob < ApplicationJob
   queue_as :default
 
   def perform(*args)
-    User.all.each do |user|
-      if user.credential.nil?
-        Rails.logger.info "Skipping user id: #{user.id} username: #{user.username} because they have no credential"
-        next
-      end
-
+    User.joins(:credential).each do |user|
       credential = user.credential
       if credential.expired?
         credential.refresh

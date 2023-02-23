@@ -20,36 +20,6 @@ module TwitterAPI
       new(token).tweets(tweet_ids)
     end
 
-    # @param [User] user APIアクセスするユーザー
-    # @param [String] pagination_token ページネーショントークン
-    # @return [TweetsResponse] ツィートのレスポンス
-    def self.fetch_timelines_reverse_chronological(user, pagination_token = nil)
-      warn "DEPRECATED: use TwitterAPI::Client.users_timelines_reverse_chronological"
-      params = Client.params_for_fetch_timelines_reverse_chronological(pagination_token)
-      res = Client.api_access(
-        credential: user.credential,
-        path: "/2/users/#{user.uid}/timelines/reverse_chronological",
-        params: params
-      )
-
-      case res
-      in Net::HTTPSuccess
-        TweetsResponse.new(res.body)
-      end
-    end
-
-    def self.params_for_fetch_timelines_reverse_chronological(pagination_token)
-      params = {
-        'tweet.fields' => 'text,referenced_tweets,attachments',
-        'expansions' => 'referenced_tweets.id,attachments.media_keys',
-        'media.fields' => 'type,preview_image_url,url'
-      }
-      if pagination_token
-        params['pagination_token'] = pagination_token
-      end
-      return params
-    end
-
     # @param [String] token アクセストークン
     # @param [String] uid このユーザーのタイムラインを取得する
     # @param [String] pagination_token ページネーショントークン
@@ -106,6 +76,7 @@ module TwitterAPI
         path: "/2/users/#{uid}/timelines/reverse_chronological",
         params: users_timelines_reverse_chronological_params(pagination_token)
       )
+      raise res.body unless res.is_a?(Net::HTTPSuccess)
       return JSON.parse(res.body).deep_symbolize_keys
     end
 
@@ -161,23 +132,23 @@ module TwitterAPI
       user_params.merge({ 'ids' => ids.join(',') })
     end
 
-    # @param [Array<String>] ids ツィートIDの配列
-    # @return [Hash] APIリクエストのパラメータ
-    def tweets_params(ids)
+    # @return [Hash] Tweetオブジェクトを取得するときに指定するAPIリクエストのパラメータ
+    def tweet_params
       {
-        'ids' => ids.join(','),
         'tweet.fields' => 'text,created_at,author_id,referenced_tweets,attachments,lang',
         'expansions' => 'referenced_tweets.id,attachments.media_keys',
         'media.fields' => 'type,preview_image_url,url'
       }
     end
 
+    # @param [Array<String>] ids ツィートIDの配列
+    # @return [Hash] APIリクエストのパラメータ
+    def tweets_params(ids)
+      tweet_params.merge({ 'ids' => ids.join(',') })
+    end
+
     def users_timelines_reverse_chronological_params(pagination_token)
-      params = {
-        'tweet.fields' => 'text,referenced_tweets,attachments',
-        'expansions' => 'referenced_tweets.id,attachments.media_keys',
-        'media.fields' => 'type,preview_image_url,url'
-      }
+      params = tweet_params
       if pagination_token
         params['pagination_token'] = pagination_token
       end
@@ -198,12 +169,12 @@ module TwitterAPI
   class TweetsResponse
     attr_reader :raw_body
 
-    def initialize(http_response_body)
-      @raw_body = http_response_body
+    def initialize(body)
+      @body = body.deep_symbolize_keys
     end
 
     def body
-      @body ||= JSON.parse(raw_body).with_indifferent_access
+      @body
     end
 
     def data
