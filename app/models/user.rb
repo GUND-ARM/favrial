@@ -18,9 +18,7 @@ class User < ApplicationRecord
   has_one :credential, dependent: :destroy
   has_many :tweets
 
-  validates :uid, presence: true
-  validates :name, presence: true
-  validates :username, presence: true
+  validates :uid, presence: true, uniqueness: true
 
   def self.find_or_create_from_auth_hash(auth_hash)
     h = ActiveSupport::HashWithIndifferentAccess.new(auth_hash)
@@ -57,6 +55,10 @@ class User < ApplicationRecord
     u.profile_image_url = user_hash[:profile_image_url]
     u.save
     return u
+  end
+
+  def self.find_or_create_by_uid(uid)
+    User.find_or_create_by(uid: uid)
   end
 
   # Twitter APIからユーザ情報を更新する

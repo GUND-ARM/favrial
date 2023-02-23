@@ -143,11 +143,17 @@ class Tweet < ApplicationRecord
     tweet_hash = tweet_hash.with_indifferent_access
     case [tweet_hash, media_type]
     in [{ id: String => t_id, text: String => text }, MediaType::PHOTO | MediaType::NONE | MediaType::OTHER]
+      if tweet_hash[:author_id]
+        u = User.find_or_create_by_uid(tweet_hash[:author_id])
+      else
+        u = nil
+      end
       Tweet.find_or_create_by(t_id: t_id) do |t|
         t.body = text
         t.raw_json = tweet_hash.to_json
         t.media_type = media_type
         t.first_media_url = first_media_url
+        t.user = u
       end
     end
   end
