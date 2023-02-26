@@ -85,15 +85,15 @@ class Tweet < ApplicationRecord
 
   attribute :classified, default: false
 
+  scope :unprotected, -> { joins(:user).where(users: { protected: false }) }
+  scope :with_photo, lambda {
+    unprotected.where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc)
+  }
   scope :classified_with_photo, lambda { |classification|
-    where(classified: true, classification: classification)
-      .where(media_type: Tweet::MediaType::PHOTO)
-      .order(created_at: :desc)
+    with_photo.where(classified: true, classification: classification)
   }
   scope :unclassified_with_photo, lambda {
-    where(classified: false)
-      .where(media_type: Tweet::MediaType::PHOTO)
-      .order(created_at: :desc)
+    with_photo.where(classified: false)
   }
 
   before_save do
