@@ -1,10 +1,10 @@
 class TweetPolicy < ApplicationPolicy
   def index?
-    user.present?
+    presentable?
   end
 
   def show?
-    user.present?
+    presentable?
   end
 
   def new?
@@ -12,7 +12,7 @@ class TweetPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.present?
+    presentable?
   end
 
   def create?
@@ -23,12 +23,26 @@ class TweetPolicy < ApplicationPolicy
   def update?
     # FIXME: ツィート自体のステータスを変更するのではなく, associationで判断などを表現したほうがいいかも
     #user.present? && (record.user == user || user.admin?)
-    user.present?
+    presentable?
   end
 
   def destroy?
     # FIXME: 管理者権限のあるユーザーのみ削除できるようにする
     #update?
     false
+  end
+
+  private
+
+  def presentable?
+    logged_in? && belongs_to_unprotected_user?
+  end
+
+  def belongs_to_unprotected_user?
+    record.user.present? && record.user.protected == false
+  end
+
+  def logged_in?
+    user.present?
   end
 end
