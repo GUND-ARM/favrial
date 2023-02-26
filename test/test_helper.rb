@@ -100,7 +100,8 @@ class ActiveSupport::TestCase
         "media_keys" => [
           "3_1600535519317745664"
         ]
-      }
+      },
+      "author_id" => "5678901011"
     }
   end
 
