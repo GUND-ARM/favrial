@@ -178,7 +178,7 @@ module TwitterAPI
     end
 
     def data
-      body[:data]
+      body[:data] || []
     end
 
     def includes
