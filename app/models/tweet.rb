@@ -95,6 +95,11 @@ class Tweet < ApplicationRecord
   scope :unclassified_with_photo, lambda {
     with_photo.where(classified: false)
   }
+  scope :with_photo_without_user, lambda {
+    where(media_type: Tweet::MediaType::PHOTO)
+      .left_outer_joins(:user)
+      .where(users: { id: nil })
+  }
 
   before_save do
     if classification
@@ -144,19 +149,36 @@ class Tweet < ApplicationRecord
     tweet_hash = tweet_hash.with_indifferent_access
     case [tweet_hash, media_type]
     in [{ id: String => t_id, text: String => text }, MediaType::PHOTO | MediaType::NONE | MediaType::OTHER]
-      if tweet_hash[:author_id]
-        u = User.find_or_create_by_uid(tweet_hash[:author_id])
-      else
-        u = nil
-      end
-      Tweet.find_or_create_by(t_id: t_id) do |t|
-        t.body = text
-        t.raw_json = tweet_hash.to_json
-        t.media_type = media_type
-        t.first_media_url = first_media_url
-        t.user = u
-      end
+      user = User.find_or_create_by_uid(tweet_hash[:author_id]) if tweet_hash[:author_id]
+      tweet = Tweet.find_or_initialize_by(t_id: t_id)
+      tweet.body = text
+      tweet.raw_json = tweet_hash.to_json
+      tweet.media_type = media_type
+      tweet.first_media_url = first_media_url
+      tweet.user = user
+      tweet.save! # 保存に失敗したら例外を投げる
+      tweet
     end
+  end
+
+  # ユーザーがnilのツィートを一括で更新する
+  #
+  # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
+  # @return [Array<Tweet>] 更新したツィートの配列
+  def self.bulk_update_has_no_user(access_user:, offset: 0, limit: 1000)
+    tweet_has_no_user = where(media_type: Tweet::MediaType::PHOTO)
+                        .order(created_at: :desc)
+                        .left_outer_joins(:user)
+                        .where(users: { id: nil })
+                        .offset(offset)
+                        .limit(limit)
+    ret = []
+    tweet_has_no_user.each_slice(100) do |tweets|
+      response_hash = TwitterAPI::Client.tweets(access_user.credential.token, tweets.map(&:t_id))
+      tweets_response = TwitterAPI::TweetsResponse.new(response_hash)
+      ret += Tweet.create_many_from_api_response(tweets_response)
+    end
+    return ret
   end
 
   # t_id が重複しているツィートをcreated_atが最新のひとつを残して削除する
