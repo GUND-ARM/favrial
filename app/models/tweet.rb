@@ -156,6 +156,11 @@ class Tweet < ApplicationRecord
         t.first_media_url = first_media_url
         t.user = u
       end
+
+  # t_id が重複しているツィートをcreated_atが最新のひとつを残して削除する
+  def self.delete_duplicate_tweets(count: 1000)
+    Tweet.group(:t_id).having('count(*) > 1').count.take(count).map do |t_id, _|
+      Tweet.where(t_id: t_id).order(created_at: :desc).offset(1).destroy_all
     end
   end
 end
