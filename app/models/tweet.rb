@@ -95,6 +95,11 @@ class Tweet < ApplicationRecord
   scope :unclassified_with_photo, lambda {
     with_photo.where(classified: false)
   }
+  scope :with_photo_without_user, lambda {
+    where(media_type: Tweet::MediaType::PHOTO)
+      .left_outer_joins(:user)
+      .where(users: { id: nil })
+  }
 
   before_save do
     if classification
