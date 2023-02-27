@@ -161,6 +161,26 @@ class Tweet < ApplicationRecord
     end
   end
 
+  # ユーザーがnilのツィートを一括で更新する
+  #
+  # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
+  # @return [Array<Tweet>] 更新したツィートの配列
+  def self.bulk_update_has_no_user(access_user:, offset: 0, limit: 1000)
+    tweet_has_no_user = where(media_type: Tweet::MediaType::PHOTO)
+                        .order(created_at: :desc)
+                        .left_outer_joins(:user)
+                        .where(users: { id: nil })
+                        .offset(offset)
+                        .limit(limit)
+    ret = []
+    tweet_has_no_user.each_slice(100) do |tweets|
+      response_hash = TwitterAPI::Client.tweets(access_user.credential.token, tweets.map(&:t_id))
+      tweets_response = TwitterAPI::TweetsResponse.new(response_hash)
+      ret += Tweet.create_many_from_api_response(tweets_response)
+    end
+    return ret
+  end
+
   # t_id が重複しているツィートをcreated_atが最新のひとつを残して削除する
   def self.delete_duplicate_tweets(count: 1000)
     Tweet.group(:t_id).having('count(*) > 1').count.take(count).map do |t_id, _|
