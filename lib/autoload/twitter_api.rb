@@ -14,8 +14,11 @@ module TwitterAPI
       new(token).users(user_ids)
     end
 
+    # tweet_idsで指定したツィートの情報を取得する
+    #
     # @param [String] token アクセストークン
     # @param [Array<String>] tweet_ids ツィートIDの配列
+    # @return [Hash] APIレスポンスのハッシュ
     def self.tweets(token, tweet_ids)
       new(token).tweets(tweet_ids)
     end
@@ -76,7 +79,6 @@ module TwitterAPI
         path: "/2/users/#{uid}/timelines/reverse_chronological",
         params: users_timelines_reverse_chronological_params(pagination_token)
       )
-      raise res.body unless res.is_a?(Net::HTTPSuccess)
       return JSON.parse(res.body).deep_symbolize_keys
     end
 
@@ -84,6 +86,10 @@ module TwitterAPI
     # @param [Hash] params APIリクエストのパラメータ
     def api_access(path:, params: nil)
       res = get(path, params)
+      # FIXME: APIの応答として4xx系のレスポンスが返ってくる場合があるかもしれないので、
+      #        ここでraiseしないほうがいいかもしれない
+      raise res.body unless res.is_a?(Net::HTTPSuccess)
+
       return res
     end
 
