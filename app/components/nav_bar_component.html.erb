@@ -39,7 +39,7 @@
       <% if @current_user %>
         <div class="dropdown mx-3">
           <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://pbs.twimg.com/profile_images/1587357812614516737/G0LrRMe7_normal.jpg" alt="mdo" width="32" height="32" class="rounded-circle">
+            <img src="<%= @current_user.profile_image_url %>" alt="mdo" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser1">
             <li class="p-3">
