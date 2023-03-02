@@ -60,8 +60,9 @@ class TweetsController < ApplicationController
       user: current_user,
       classification: ClassifyResult::Classification::SULEMIO
     )
-    classify_result.result = @tweet.a_classification == ClassifyResult::Classification::SULEMIO
-    @tweet.classify_results << classify_result
+    classify_result.result = tweet_params[:a_classification] == ClassifyResult::Classification::SULEMIO
+    # FIXME: ここでsave!してるのは怪しすぎる
+    classify_result.save!
 
     respond_to do |format|
       if @tweet.update(tweet_params)
