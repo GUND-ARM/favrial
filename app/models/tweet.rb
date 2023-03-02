@@ -202,6 +202,26 @@ class Tweet < ApplicationRecord
     end
   end
 
+  # データ移行用
+  # classified が true で, classification が SULEMIO のツィートに sulemio,true の classify_result を追加する
+  # classified が true で, classification が SULEMIO でないツィートに sulemio,false のclassify_result を追加する
+  # @param [User] user 判別するユーザー
+  def self.add_classify_result_for_sulemio(user:, limit: 10)
+    tweets = Tweet.classified_without_classify_result.order(created_at: :desc).limit(limit)
+    tweets.each do |t|
+      # @type [Tweet]
+      tweet = t
+      if tweet.classification == Classification::SULEMIO
+        tweet.classify_sulemio_by_user(user: user, result: true)
+      else
+        tweet.classify_sulemio_by_user(user: user, result: false)
+      end
+    end
+  end
+  scope :classified_without_classify_result, lambda {
+    left_outer_joins(:classify_results).where(classified: true, classify_results: { id: nil })
+  }
+
   # 判別をおこなう
   # @param [User] user 判別したユーザー（機械学習による判別の場合はnil）
   # @param [String] classification 判別クラス
