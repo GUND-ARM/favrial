@@ -154,4 +154,22 @@ class TweetTest < ActiveSupport::TestCase
 
     assert_equal 1, Tweet.classified_with_sulemio_photo.count
   end
+
+  test "ユーザがスレミオだと判断したツィートは sulemio? がtrueを返す" do
+    # unprotectedなユーザのツィートかどうか判別するためにuserを関連付ける
+    Tweet.all.each do |tweet|
+      tweet.user = users(:one)
+      tweet.save!
+    end
+
+    # @type [Tweet]
+    tweet_1 = tweets(:one)
+    tweet_1.classify_sulemio_by_ml(result: true)
+    assert_not tweet_1.sulemio?
+
+    # @type [Tweet]
+    tweet_2 = tweets(:two)
+    tweet_2.classify_sulemio_by_user(user: users(:one), result: true)
+    assert tweet_2.sulemio?
+  end
 end

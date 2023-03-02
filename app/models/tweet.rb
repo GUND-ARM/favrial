@@ -123,16 +123,24 @@ class Tweet < ApplicationRecord
     self.url ||= "https://twitter.com/_/status/#{t_id}"
   end
 
+  # ユーザによる判断が存在する場合にtrueを返す
   def sulemio?
-    classification == Classification::SULEMIO
+    classified_by?(Classification::SULEMIO)
   end
 
+  # ユーザによる判断が存在する場合にtrueを返す
   def miorine?
-    classification == Classification::MIORINE
+    classified_by?(Classification::MIORINE)
   end
 
+  # ユーザによる判断が存在する場合にtrueを返す
   def suletta?
-    classification == Classification::SULETTA
+    classified_by?(Classification::SULETTA)
+  end
+
+  # ユーザによる判断が存在する場合にtrueを返す
+  def classified_by?(classification)
+    classify_results.where(classification: classification, by_ml: false).exists?
   end
 
   # api_response is a hash
