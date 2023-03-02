@@ -23,6 +23,7 @@ class Tweet < ApplicationRecord
   # end
   #
   # スレミオ分類
+  # FIXME: Concernにくくりだすのがいいかも？
   module Classification
     [
       :SULETTA,  # スレッタ単体
@@ -102,7 +103,9 @@ class Tweet < ApplicationRecord
       .where(classify_results: { classification: classification, result: true, by_ml: true })
   }
   scope :unclassified_with_photo, lambda {
-    with_photo.where(classified: false)
+    with_photo
+      .left_outer_joins(:classify_results)
+      .where(classify_results: { id: nil })
   }
   scope :pre_classified_with_sulemio_photo, lambda {
     pre_classified_with_photo(ClassifyResult::Classification::SULEMIO)
@@ -125,23 +128,29 @@ class Tweet < ApplicationRecord
   end
 
   # ユーザによる判断が存在する場合にtrueを返す
+  def classified?
+    classify_results.where(by_ml: false).exists?
+  end
+
+  # ユーザによってスレミオだと判断されている場合にtrueを返す
   def sulemio?
-    classified_by?(Classification::SULEMIO)
+    classified_for?(Classification::SULEMIO)
   end
 
-  # ユーザによる判断が存在する場合にtrueを返す
+  # ユーザによってミオリネだと判断されている場合にtrueを返す
   def miorine?
-    classified_by?(Classification::MIORINE)
+    classified_for?(Classification::MIORINE)
   end
 
-  # ユーザによる判断が存在する場合にtrueを返す
+  # ユーザによってスレッタだと判断されている場合にtrueを返す
   def suletta?
-    classified_by?(Classification::SULETTA)
+    classified_for?(Classification::SULETTA)
   end
 
-  # ユーザによる判断が存在する場合にtrueを返す
-  def classified_by?(classification)
-    classify_results.where(classification: classification, by_ml: false).exists?
+  # ユーザによってclassificationだと判断されている場合にtrueを返す
+  # FIXME: includesしてもexists?を呼ぶとN+1が発生する
+  def classified_for?(classification)
+    classify_results.where(classification: classification, result: true, by_ml: false).exists?
   end
 
   # api_response is a hash

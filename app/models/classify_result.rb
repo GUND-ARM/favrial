@@ -12,6 +12,7 @@
 #  updated_at     :datetime         not null
 #
 class ClassifyResult < ApplicationRecord
+  # FIXME: Concernにくくりだすのがいいかも？
   module Classification
     [
       :SULETTA,  # スレッタが主題のツィート
