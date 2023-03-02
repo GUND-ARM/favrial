@@ -55,6 +55,14 @@ class TweetsController < ApplicationController
   def update
     authorize @tweet
 
+    # FIXME: SULEMIO以外の判断もやろうとするとこれだとまずい
+    classify_result = @tweet.classify_results.find_or_initialize_by(
+      user: current_user,
+      classification: ClassifyResult::Classification::SULEMIO
+    )
+    classify_result.result = @tweet.a_classification == ClassifyResult::Classification::SULEMIO
+    @tweet.classify_results << classify_result
+
     respond_to do |format|
       if @tweet.update(tweet_params)
         format.html { redirect_to tweet_url(@tweet), notice: "Tweet was successfully updated." }
@@ -86,10 +94,11 @@ class TweetsController < ApplicationController
   # before_actionで呼び出される
   def set_tweet
     @tweet = Tweet.find(params[:id])
+    @tweet.a_classification = @tweet.classify_results.find_by(user: current_user, result: true)&.classification
   end
 
   # 許可するパラメーターのリスト
   def tweet_params
-    params.require(:tweet).permit(:classification)
+    params.require(:tweet).permit(:a_classification)
   end
 end

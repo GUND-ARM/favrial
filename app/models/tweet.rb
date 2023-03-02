@@ -84,6 +84,7 @@ class Tweet < ApplicationRecord
 
   validates :t_id, uniqueness: true
 
+  attribute :a_classification, :string # 元々あったclassificationのかわりに使う
   attribute :classified, default: false
 
   scope :unprotected, -> { joins(:user).where(users: { protected: false }) }
