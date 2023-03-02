@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: classify_results
+#
+#  id             :bigint           not null, primary key
+#  classification :string
+#  result         :boolean
+#  by_ml          :boolean
+#  tweet_id       :bigint
+#  user_id        :bigint
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
 class ClassifyResult < ApplicationRecord
   module Classification
     [
