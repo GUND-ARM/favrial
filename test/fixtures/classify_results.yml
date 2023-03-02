@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+#one:
+#  classification: MyString
+#  result: false
+#  by_ml: false
+#  tweet: one
+#  user: one
+#
+#two:
+#  classification: MyString
+#  result: false
+#  by_ml: false
+#  tweet: two
+#  user: two
