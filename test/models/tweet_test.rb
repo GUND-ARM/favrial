@@ -101,4 +101,75 @@ class TweetTest < ActiveSupport::TestCase
     user_2.destroy
     assert_equal Tweet.joins(:user).count, 1
   end
+
+  test "AIがスレミオだと仮分類したツィートのみ取得する" do
+    # unprotectedなユーザのツィートかどうか判別するためにuserを関連付ける
+    Tweet.all.each do |tweet|
+      tweet.user = users(:one)
+      tweet.save!
+    end
+
+    # @type [Tweet]
+    tweet_1 = tweets(:one)
+    tweet_1.classify_sulemio_by_ml(result: true)
+
+    # @type [Tweet]
+    tweet_2 = tweets(:two)
+    tweet_2.classify_sulemio_by_ml(result: true)
+
+    # @type [Tweet]
+    tweet_3 = tweets(:three)
+    tweet_3.classify_sulemio_by_ml(result: false)
+
+    # @type [Tweet]
+    tweet_4 = tweets(:four)
+    user = users(:one)
+    tweet_4.classify_sulemio_by_user(user: user, result: true)
+
+    assert_equal 2, Tweet.pre_classified_with_sulemio_photo.count
+  end
+
+  test "ユーザがスレミオだと判断したツィートのみ取得する" do
+    # unprotectedなユーザのツィートかどうか判別するためにuserを関連付ける
+    Tweet.all.each do |tweet|
+      tweet.user = users(:one)
+      tweet.save!
+    end
+
+    # @type [Tweet]
+    tweet_1 = tweets(:one)
+    tweet_1.classify_sulemio_by_ml(result: true)
+
+    # @type [Tweet]
+    tweet_2 = tweets(:two)
+    tweet_2.classify_sulemio_by_ml(result: true)
+
+    # @type [Tweet]
+    tweet_3 = tweets(:three)
+    tweet_3.classify_sulemio_by_user(user: users(:one), result: true)
+
+    # @type [Tweet]
+    tweet_4 = tweets(:four)
+    tweet_4.classify_sulemio_by_user(user: users(:one), result: false)
+
+    assert_equal 1, Tweet.classified_with_sulemio_photo.count
+  end
+
+  test "ユーザがスレミオだと判断したツィートは sulemio? がtrueを返す" do
+    # unprotectedなユーザのツィートかどうか判別するためにuserを関連付ける
+    Tweet.all.each do |tweet|
+      tweet.user = users(:one)
+      tweet.save!
+    end
+
+    # @type [Tweet]
+    tweet_1 = tweets(:one)
+    tweet_1.classify_sulemio_by_ml(result: true)
+    assert_not tweet_1.sulemio?
+
+    # @type [Tweet]
+    tweet_2 = tweets(:two)
+    tweet_2.classify_sulemio_by_user(user: users(:one), result: true)
+    assert tweet_2.sulemio?
+  end
 end

@@ -16,7 +16,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         <a class="text-decoration-none" href="<%= @tweet.url %>" target="_blank"><i class="bi bi-twitter"></i>&nbsp;Twitterで見る&nbsp;<i class="bi bi-box-arrow-up-right"></i>
       </small></a></p>
-      <% if @tweet.classification %>
+      <% if @tweet.classified? %>
         <%= render(ClassificationResultComponent.new(@tweet)) %>
       <% else %>
         <%= render(ActionButtonComponent.new(tweet: @tweet) ) %>

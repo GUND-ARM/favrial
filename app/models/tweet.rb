@@ -23,6 +23,7 @@ class Tweet < ApplicationRecord
   # end
   #
   # スレミオ分類
+  # FIXME: Concernにくくりだすのがいいかも？
   module Classification
     [
       :SULETTA,  # スレッタ単体
@@ -80,9 +81,11 @@ class Tweet < ApplicationRecord
   end
 
   belongs_to :user, optional: true
+  has_many :classify_results, dependent: :destroy
 
   validates :t_id, uniqueness: true
 
+  attribute :a_classification, :string # 元々あったclassificationのかわりに使う
   attribute :classified, default: false
 
   scope :unprotected, -> { joins(:user).where(users: { protected: false }) }
@@ -90,10 +93,25 @@ class Tweet < ApplicationRecord
     unprotected.where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc)
   }
   scope :classified_with_photo, lambda { |classification|
-    with_photo.where(classified: true, classification: classification)
+    with_photo
+      .joins(:classify_results)
+      .where(classify_results: { classification: classification, result: true, by_ml: false })
+  }
+  scope :pre_classified_with_photo, lambda { |classification|
+    with_photo
+      .joins(:classify_results)
+      .where(classify_results: { classification: classification, result: true, by_ml: true })
   }
   scope :unclassified_with_photo, lambda {
-    with_photo.where(classified: false)
+    with_photo
+      .left_outer_joins(:classify_results)
+      .where(classify_results: { id: nil })
+  }
+  scope :pre_classified_with_sulemio_photo, lambda {
+    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO)
+  }
+  scope :classified_with_sulemio_photo, lambda {
+    classified_with_photo(ClassifyResult::Classification::SULEMIO)
   }
   scope :with_photo_without_user, lambda {
     where(media_type: Tweet::MediaType::PHOTO)
@@ -109,16 +127,30 @@ class Tweet < ApplicationRecord
     self.url ||= "https://twitter.com/_/status/#{t_id}"
   end
 
+  # ユーザによる判断が存在する場合にtrueを返す
+  def classified?
+    classify_results.where(by_ml: false).exists?
+  end
+
+  # ユーザによってスレミオだと判断されている場合にtrueを返す
   def sulemio?
-    classification == Classification::SULEMIO
+    classified_for?(Classification::SULEMIO)
   end
 
+  # ユーザによってミオリネだと判断されている場合にtrueを返す
   def miorine?
-    classification == Classification::MIORINE
+    classified_for?(Classification::MIORINE)
   end
 
+  # ユーザによってスレッタだと判断されている場合にtrueを返す
   def suletta?
-    classification == Classification::SULETTA
+    classified_for?(Classification::SULETTA)
+  end
+
+  # ユーザによってclassificationだと判断されている場合にtrueを返す
+  # FIXME: includesしてもexists?を呼ぶとN+1が発生する
+  def classified_for?(classification)
+    classify_results.where(classification: classification, result: true, by_ml: false).exists?
   end
 
   # api_response is a hash
@@ -186,5 +218,59 @@ class Tweet < ApplicationRecord
     Tweet.group(:t_id).having('count(*) > 1').count.take(count).map do |t_id, _|
       Tweet.where(t_id: t_id).order(created_at: :desc).offset(1).destroy_all
     end
+  end
+
+  # データ移行用
+  # classified が true で, classification が SULEMIO のツィートに sulemio,true の classify_result を追加する
+  # classified が true で, classification が SULEMIO でないツィートに sulemio,false のclassify_result を追加する
+  # @param [User] user 判別するユーザー
+  def self.add_classify_result_for_sulemio(user:, limit: 10)
+    tweets = Tweet.classified_without_classify_result.order(created_at: :desc).limit(limit)
+    tweets.each do |t|
+      # @type [Tweet]
+      tweet = t
+      if tweet.classification == Classification::SULEMIO
+        tweet.classify_sulemio_by_user(user: user, result: true)
+      else
+        tweet.classify_sulemio_by_user(user: user, result: false)
+      end
+    end
+  end
+  scope :classified_without_classify_result, lambda {
+    left_outer_joins(:classify_results).where(classified: true, classify_results: { id: nil })
+  }
+
+  # 判別をおこなう
+  # @param [User] user 判別したユーザー（機械学習による判別の場合はnil）
+  # @param [String] classification 判別クラス
+  # @param [Boolean] result 判別結果
+  # @param [Boolean] by_ml 機械学習による判別かどうか
+  # @return [ClassifyResult] 保存した判別結果
+  # @raise [ActiveRecord::RecordInvalid] 判別結果の保存に失敗した場合
+  def classify(user:, classification:, result:, by_ml:)
+    classify_result = ClassifyResult.find_or_initialize_by(
+      user: user,
+      tweet: self,
+      classification: classification
+    )
+    classify_result.result = result
+    classify_result.by_ml = by_ml
+    classify_result.save!
+    return classify_result
+  end
+
+  # 機械学習による判別結果を保存する
+  # @param [Boolean] result 判別結果
+  # @return [ClassifyResult] 保存した判別結果
+  def classify_sulemio_by_ml(result:)
+    classify(user: nil, classification: Classification::SULEMIO, result: result, by_ml: true)
+  end
+
+  # ユーザーによる判別結果を保存する
+  # @param [User] user 判別したユーザー
+  # @param [Boolean] result 判別結果
+  # @return [ClassifyResult] 保存した判別結果
+  def classify_sulemio_by_user(user:, result:)
+    classify(user: user, classification: Classification::SULEMIO, result: result, by_ml: false)
   end
 end

@@ -75,7 +75,7 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
   test "should not update tweet without login" do
     patch tweet_url(@tweet), params: {
       tweet: {
-        classification: @tweet.classification
+        a_classification: @tweet.classification
       }
     }
     assert_response :forbidden
@@ -85,7 +85,7 @@ class TweetsControllerTest < ActionDispatch::IntegrationTest
     login
     patch tweet_url(@tweet), params: {
       tweet: {
-        classification: @tweet.classification
+        a_classification: @tweet.classification
       }
     }
     assert_redirected_to tweet_url(@tweet)

@@ -1,14 +1,14 @@
 <%= form_with(model: @tweet) do |form| %>
   <div class="row" style="height: 48px;">
     <div class="col col-6">
-      <%= form.button :classification,
+      <%= form.button :a_classification,
         value: Tweet::Classification::NOTSULEMIO,
         class: "btn btn-secondary btn-lg text-nowrap w-100" do %>
         Not ｽﾚﾐｵ
       <% end %>
     </div>
     <div class="col col-6">
-      <%= form.button :classification,
+      <%= form.button :a_classification,
         value: Tweet::Classification::SULEMIO,
         class: "btn btn-primary btn-lg text-nowrap w-100" do %>
         スレミオ

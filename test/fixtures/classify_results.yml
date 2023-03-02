@@ -1,0 +1,27 @@
+# == Schema Information
+#
+# Table name: classify_results
+#
+#  id             :bigint           not null, primary key
+#  classification :string
+#  result         :boolean
+#  by_ml          :boolean
+#  tweet_id       :bigint
+#  user_id        :bigint
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+
+#one:
+#  classification: MyString
+#  result: false
+#  by_ml: false
+#  tweet: one
+#  user: one
+#
+#two:
+#  classification: MyString
+#  result: false
+#  by_ml: false
+#  tweet: two
+#  user: two
