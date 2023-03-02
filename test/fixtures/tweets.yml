@@ -36,3 +36,10 @@ three:
   url: "https://twitter.com/username/status/1234567891"
   raw_json: "{'key': 'value'}"
   media_type: "photo"
+
+four:
+  t_id: "9876543211"
+  body: "This is four"
+  url: "https://twitter.com/username/status/0987654321"
+  raw_json: "{'key': 'value'}"
+  media_type: "photo"

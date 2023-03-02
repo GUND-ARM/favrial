@@ -17,6 +17,7 @@
 class User < ApplicationRecord
   has_one :credential, dependent: :destroy
   has_many :tweets
+  has_many :classify_results
 
   validates :uid, presence: true, uniqueness: true
 

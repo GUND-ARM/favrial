@@ -80,6 +80,7 @@ class Tweet < ApplicationRecord
   end
 
   belongs_to :user, optional: true
+  has_many :classify_results, dependent: :destroy
 
   validates :t_id, uniqueness: true
 
@@ -90,10 +91,23 @@ class Tweet < ApplicationRecord
     unprotected.where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc)
   }
   scope :classified_with_photo, lambda { |classification|
-    with_photo.where(classified: true, classification: classification)
+    with_photo
+      .joins(:classify_results)
+      .where(classify_results: { classification: classification, result: true, by_ml: false })
+  }
+  scope :pre_classified_with_photo, lambda { |classification|
+    with_photo
+      .joins(:classify_results)
+      .where(classify_results: { classification: classification, result: true, by_ml: true })
   }
   scope :unclassified_with_photo, lambda {
     with_photo.where(classified: false)
+  }
+  scope :pre_classified_with_sulemio_photo, lambda {
+    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO)
+  }
+  scope :classified_with_sulemio_photo, lambda {
+    classified_with_photo(ClassifyResult::Classification::SULEMIO)
   }
   scope :with_photo_without_user, lambda {
     where(media_type: Tweet::MediaType::PHOTO)
@@ -186,5 +200,39 @@ class Tweet < ApplicationRecord
     Tweet.group(:t_id).having('count(*) > 1').count.take(count).map do |t_id, _|
       Tweet.where(t_id: t_id).order(created_at: :desc).offset(1).destroy_all
     end
+  end
+
+  # 判別をおこなう
+  # @param [User] user 判別したユーザー（機械学習による判別の場合はnil）
+  # @param [String] classification 判別クラス
+  # @param [Boolean] result 判別結果
+  # @param [Boolean] by_ml 機械学習による判別かどうか
+  # @return [ClassifyResult] 保存した判別結果
+  # @raise [ActiveRecord::RecordInvalid] 判別結果の保存に失敗した場合
+  def classify(user:, classification:, result:, by_ml:)
+    classify_result = ClassifyResult.find_or_initialize_by(
+      user: user,
+      tweet: self,
+      classification: classification
+    )
+    classify_result.result = result
+    classify_result.by_ml = by_ml
+    classify_result.save!
+    return classify_result
+  end
+
+  # 機械学習による判別結果を保存する
+  # @param [Boolean] result 判別結果
+  # @return [ClassifyResult] 保存した判別結果
+  def classify_sulemio_by_ml(result:)
+    classify(user: nil, classification: Classification::SULEMIO, result: result, by_ml: true)
+  end
+
+  # ユーザーによる判別結果を保存する
+  # @param [User] user 判別したユーザー
+  # @param [Boolean] result 判別結果
+  # @return [ClassifyResult] 保存した判別結果
+  def classify_sulemio_by_user(user:, result:)
+    classify(user: user, classification: Classification::SULEMIO, result: result, by_ml: false)
   end
 end
