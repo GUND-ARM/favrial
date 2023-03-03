@@ -14,16 +14,16 @@ class TweetsController < ApplicationController
     @tweets = case @scope
               when "with_photo"
                 # 画像つきの全てのツィートを表示する
-                Tweet.classified_with_photo.page(params[:page])
+                Tweet.classified_with_photo.order(created_at: :desc).page(params[:page])
               when "classified_with_sulemio_photo"
                 # ユーザによるスレミオ判定済みの画像を表示する
-                Tweet.classified_with_sulemio_photo.page(params[:page])
+                Tweet.classified_with_sulemio_photo.order(created_at: :desc).page(params[:page])
               when "pre_classified_with_sulemio_photo"
                 # AI仮判断済みのスレミオ画像を表示する
-                Tweet.pre_classified_with_sulemio_photo.page(params[:page])
+                Tweet.pre_classified_with_sulemio_photo.order(created_at: :desc).page(params[:page])
               when "pre_classified_with_notsulemio_photo"
                 # AI仮判断済みのスレミオ以外の画像を表示する
-                Tweet.pre_classified_with_notsulemio_photo.page(params[:page])
+                Tweet.pre_classified_with_notsulemio_photo.order(created_at: :desc).page(params[:page])
               else
                 # リクエストエラー
                 raise ActionController::BadRequest
