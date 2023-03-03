@@ -1,17 +1,23 @@
-<% if @classification %>
-  <% if @classification == Tweet::Classification::SULEMIO %>
-    <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;の画像投稿</h1>
-    <p>みんなでスレミオだと判断した画像ツィートです</p>
-  <% elsif @classification == Tweet::Classification::SULETTA %>
-    <h1 class="mt-4 mb-3">スレッタ&#x1f99d;の画像投稿</h1>
-    <p>みんなでスレッタだと判断した画像ツィートです</p>
-  <% elsif @classification == Tweet::Classification::MIORINE %>
-    <h1 class="mt-4 mb-3">ミオリネ&#x1f345;の画像投稿</h1>
-    <p>みんなでミオリネだと判断した画像ツィートです</p>
-  <% end %>
-<% else %>
-  <h1 class="mt-4 mb-3">みんなのタイムライン（未分類の画像投稿）</h1>
-  <p>みんなのTLに流れてきたすべての画像ツィートのうち、未分類のものです</p>
+<% if @scope == "classified_with_sulemio_photo" %>
+  <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;の画像投稿</h1>
+  <p>みんなでスレミオだと判断した画像ツィートです</p>
+<% elsif @scope == "pre_classified_with_sulemio_photo" %>
+  <h1 class="mt-4 mb-3">スレミオ&#x1f99d;&#x1f345;の画像投稿（AIによる仮判断）</h1>
+  <p>意思拡張AIが<b>スレミオだ</b>と判断した画像ツィートです。<br>
+  判断結果があっていたら「スレミオ」を、間違っていたら「Not ｽﾚﾐｵ」を押して正解を教えてあげてください。</p>
+<% elsif @scope == "pre_classified_with_notsulemio_photo" %>
+  <h1 class="mt-4 mb-3">&#x1f99d;スレミオではない&#x1f345;画像投稿（AIによる仮判断）</h1>
+  <p>意思拡張AIが<b>スレミオではない</b>と判断した画像ツィートです。<br>
+  判断結果があっていたら「スレミオ」を、間違っていたら「Not ｽﾚﾐｵ」を押して正解を教えてあげてください。</p>
+<% elsif @scope == "suletta" %>
+  <h1 class="mt-4 mb-3">スレッタ&#x1f99d;の画像投稿</h1>
+  <p>みんなでスレッタだと判断した画像ツィートです</p>
+<% elsif @scope == "miorine" %>
+  <h1 class="mt-4 mb-3">ミオリネ&#x1f345;の画像投稿</h1>
+  <p>みんなでミオリネだと判断した画像ツィートです</p>
+<% elsif @scope == "none" %>
+  <h1 class="mt-4 mb-3">未分類の画像</h1>
+  <p>全ての画像ツィートです</p>
 <% end %>
 
 <p><%= @tweets.total_count %> ツィート</p>
@@ -22,7 +28,7 @@
      data-controller="pagination"
      data-action="scroll@document->pagination#scroll"
      data-pagination-url-value="<%= tweets_path %>"
-     data-pagination-classification-value="<%= @classification %>"
+     data-pagination-scope-value="<%= @scope %>"
      data-pagination-page-value="<%= @tweets.next_page %>" >
   <% @tweets.each do |tweet| %>
     <%= render tweet %>

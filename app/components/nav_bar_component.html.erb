@@ -12,7 +12,8 @@
               未分類のツィート
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/tweets">みんなのタイムライン</a></li>
+              <li><a class="dropdown-item" href="/tweets?scope=pre_classified_with_sulemio_photo&dmode=sulemio">AIによる仮分類済(スレミオだ, スレミオ判断モード)</a></li>
+              <li><a class="dropdown-item" href="/tweets?scope=pre_classified_with_notsulemio_photo&dmode=sulemio">AIによる仮判断済(スレミオではない, スレミオ判断モード)</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -20,9 +21,9 @@
               分類済みのツィート
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/tweets?classification=sulemio">スレミオ&#x1f99d;&#x1f345;</a></li>
-              <li><a class="dropdown-item" href="/tweets?classification=suletta">スレッタ&#x1f99d;</a></li>
-              <li><a class="dropdown-item" href="/tweets?classification=miorine">ミオリネ&#x1f345;</a></li>
+              <li><a class="dropdown-item" href="/tweets?scope=classified_with_sulemio_photo">スレミオ&#x1f99d;&#x1f345;</a></li>
+              <!--<li><a class="dropdown-item" href="/tweets?classification=suletta">スレッタ&#x1f99d;</a></li>-->
+              <!--<li><a class="dropdown-item" href="/tweets?classification=miorine">ミオリネ&#x1f345;</a></li>-->
             </ul>
           </li>
         <% end %>
