@@ -5,3 +5,6 @@
   fetch_timeline:
     every: '15m'
     class: FetchTimelineJob
+  #predict:
+  #  every: '1m'
+  #  class: PredictJob
