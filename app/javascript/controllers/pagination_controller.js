@@ -4,7 +4,7 @@ import { get } from "@rails/request.js"
 export default class extends Controller {
   static values = {
     url: String,
-    classification: String,
+    scope: String,
     page: Number,
   };
 
@@ -36,8 +36,8 @@ export default class extends Controller {
 
   async _fetchNewPage() {
     const url = new URL(this.urlValue, location.origin);
-    if (this.classificationValue) {
-      url.searchParams.set('classification', this.classificationValue);
+    if (this.scopeValue) {
+      url.searchParams.set('scope', this.scopeValue);
     }
     url.searchParams.set('page', this.pageValue);
     

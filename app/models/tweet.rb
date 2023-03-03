@@ -90,17 +90,17 @@ class Tweet < ApplicationRecord
 
   scope :unprotected, -> { joins(:user).where(users: { protected: false }) }
   scope :with_photo, lambda {
-    unprotected.where(media_type: Tweet::MediaType::PHOTO).order(created_at: :desc)
+    unprotected.where(media_type: Tweet::MediaType::PHOTO)
   }
   scope :classified_with_photo, lambda { |classification|
     with_photo
       .joins(:classify_results)
       .where(classify_results: { classification: classification, result: true, by_ml: false })
   }
-  scope :pre_classified_with_photo, lambda { |classification|
+  scope :pre_classified_with_photo, lambda { |classification, result|
     with_photo
       .joins(:classify_results)
-      .where(classify_results: { classification: classification, result: true, by_ml: true })
+      .where(classify_results: { classification: classification, result: result, by_ml: true })
   }
   scope :unclassified_with_photo, lambda {
     with_photo
@@ -108,7 +108,10 @@ class Tweet < ApplicationRecord
       .where(classify_results: { id: nil })
   }
   scope :pre_classified_with_sulemio_photo, lambda {
-    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO)
+    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, true)
+  }
+  scope :pre_classified_with_notsulemio_photo, lambda {
+    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, false)
   }
   scope :classified_with_sulemio_photo, lambda {
     classified_with_photo(ClassifyResult::Classification::SULEMIO)
@@ -240,7 +243,7 @@ class Tweet < ApplicationRecord
     left_outer_joins(:classify_results).where(classified: true, classify_results: { id: nil })
   }
 
-  # 判別をおこなう
+  # 判別結果を保存する
   # @param [User] user 判別したユーザー（機械学習による判別の場合はnil）
   # @param [String] classification 判別クラス
   # @param [Boolean] result 判別結果
@@ -272,5 +275,29 @@ class Tweet < ApplicationRecord
   # @return [ClassifyResult] 保存した判別結果
   def classify_sulemio_by_user(user:, result:)
     classify(user: user, classification: Classification::SULEMIO, result: result, by_ml: false)
+  end
+
+  # MLサービスを呼び出して判別結果を保存する
+  def predict
+    require 'open-uri'
+    return unless media_type == MediaType::PHOTO
+    return if classify_results.exists?(by_ml: true)
+    return if first_media_url.nil?
+    return if first_media_url.empty?
+
+    # MLサービスにリクエストを投げる
+    response = URI.open("http://ml:5080/?image_url=#{first_media_url}")
+    return unless response.status[0] == "200"
+
+    # レスポンスをパースする
+    response_hash = JSON.parse(response.read.chomp)
+
+    # 判別結果を保存する
+    case response_hash['class_name']
+    when 'SULEMIO'
+      classify_sulemio_by_ml(result: true)
+    when 'NOTSULEMIO'
+      classify_sulemio_by_ml(result: false)
+    end
   end
 end
