@@ -15,9 +15,9 @@
 <% elsif @scope == "miorine" %>
   <h1 class="mt-4 mb-3">ミオリネ&#x1f345;の画像投稿</h1>
   <p>みんなでミオリネだと判断した画像ツィートです</p>
-<% elsif @scope == "none" %>
-  <h1 class="mt-4 mb-3">未分類の画像</h1>
-  <p>全ての画像ツィートです</p>
+<% elsif @scope == "with_photo" %>
+  <h1 class="mt-4 mb-3">全ての画像</h1>
+  <p>収集済みの全ての画像ツィートです</p>
 <% end %>
 
 <p><%= @tweets.total_count %> ツィート</p>

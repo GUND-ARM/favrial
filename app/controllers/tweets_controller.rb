@@ -14,7 +14,7 @@ class TweetsController < ApplicationController
     @tweets = case @scope
               when "with_photo"
                 # 画像つきの全てのツィートを表示する
-                Tweet.classified_with_photo.order(created_at: :desc).page(params[:page])
+                Tweet.with_photo.order(created_at: :desc).page(params[:page])
               when "classified_with_sulemio_photo"
                 # ユーザによるスレミオ判定済みの画像を表示する
                 Tweet.classified_with_sulemio_photo.order(created_at: :desc).page(params[:page])
