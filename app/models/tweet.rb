@@ -97,10 +97,10 @@ class Tweet < ApplicationRecord
       .joins(:classify_results)
       .where(classify_results: { classification: classification, result: true, by_ml: false })
   }
-  scope :pre_classified_with_photo, lambda { |classification|
+  scope :pre_classified_with_photo, lambda { |classification, result|
     with_photo
       .joins(:classify_results)
-      .where(classify_results: { classification: classification, result: true, by_ml: true })
+      .where(classify_results: { classification: classification, result: result, by_ml: true })
   }
   scope :unclassified_with_photo, lambda {
     with_photo
@@ -108,7 +108,10 @@ class Tweet < ApplicationRecord
       .where(classify_results: { id: nil })
   }
   scope :pre_classified_with_sulemio_photo, lambda {
-    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO)
+    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, true)
+  }
+  scope :pre_classified_with_notsulemio_photo, lambda {
+    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, false)
   }
   scope :classified_with_sulemio_photo, lambda {
     classified_with_photo(ClassifyResult::Classification::SULEMIO)
