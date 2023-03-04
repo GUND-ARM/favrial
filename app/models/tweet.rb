@@ -98,9 +98,12 @@ class Tweet < ApplicationRecord
       .where(classify_results: { classification: classification, result: true, by_ml: false })
   }
   scope :pre_classified_with_photo, lambda { |classification, result|
+    subquery = with_photo
+               .joins(:classify_results).where(classify_results: { classification: classification, by_ml: false })
     with_photo
       .joins(:classify_results)
       .where(classify_results: { classification: classification, result: result, by_ml: true })
+      .where.not(id: subquery)
   }
   scope :unclassified_with_photo, lambda {
     with_photo

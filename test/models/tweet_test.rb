@@ -124,6 +124,7 @@ class TweetTest < ActiveSupport::TestCase
     # @type [Tweet]
     tweet_4 = tweets(:four)
     user = users(:one)
+    tweet_4.classify_sulemio_by_ml(result: true)
     tweet_4.classify_sulemio_by_user(user: user, result: true)
 
     assert_equal 2, Tweet.pre_classified_with_sulemio_photo.count
