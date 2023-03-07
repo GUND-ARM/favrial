@@ -88,7 +88,7 @@ class Tweet < ApplicationRecord
   attribute :a_classification, :string # 元々あったclassificationのかわりに使う
   attribute :classified, default: false
 
-  scope :unprotected, -> { includes(:classify_results).joins(:user).where(users: { protected: false }) }
+  scope :unprotected, -> { preload(:classify_results).joins(:user).where(users: { protected: false }) }
   scope :with_photo, lambda {
     unprotected.where(media_type: Tweet::MediaType::PHOTO)
   }
