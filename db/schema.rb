@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_07_174427) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_07_185207) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,6 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_07_174427) do
     t.string "first_media_url"
     t.bigint "user_id"
     t.index ["created_at"], name: "index_tweets_on_created_at"
+    t.index ["t_id"], name: "index_tweets_on_t_id", unique: true
     t.index ["user_id"], name: "index_tweets_on_user_id"
   end
 
@@ -64,6 +65,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_07_174427) do
     t.string "url"
     t.string "description"
     t.string "profile_image_url"
+    t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
   add_foreign_key "credentials", "users"
