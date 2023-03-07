@@ -88,7 +88,7 @@ class Tweet < ApplicationRecord
   attribute :a_classification, :string # 元々あったclassificationのかわりに使う
   attribute :classified, default: false
 
-  scope :unprotected, -> { joins(:user).where(users: { protected: false }) }
+  scope :unprotected, -> { includes(:classify_results).joins(:user).where(users: { protected: false }) }
   scope :with_photo, lambda {
     unprotected.where(media_type: Tweet::MediaType::PHOTO)
   }
@@ -134,8 +134,9 @@ class Tweet < ApplicationRecord
   end
 
   # ユーザによる判断が存在する場合にtrueを返す
+  # includes(:classify_results) しておく必要がある
   def classified?
-    classify_results.where(by_ml: false).exists?
+    classify_results.map(&:by_ml).include?(false)
   end
 
   # ユーザによってスレミオだと判断されている場合にtrueを返す
@@ -154,9 +155,14 @@ class Tweet < ApplicationRecord
   end
 
   # ユーザによってclassificationだと判断されている場合にtrueを返す
-  # FIXME: includesしてもexists?を呼ぶとN+1が発生する
+  # includes(:classify_results) しておく必要がある
+  # FIXME: classify_resultsの数が増えるとまずいかも？
   def classified_for?(classification)
-    classify_results.where(classification: classification, result: true, by_ml: false).exists?
+    user_crs = classify_results.reject{ |cr| cr.by_ml }.select { |cr| cr.classification == classification }
+    true_count = user_crs.count { |cr| cr.result }
+    false_count = user_crs.count { |cr| !cr.result }
+    ratio = true_count.to_f / (true_count + false_count)
+    return ratio >= 0.5
   end
 
   # api_response is a hash
