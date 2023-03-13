@@ -20,6 +20,7 @@
   <p>収集済みの全ての画像ツィートです</p>
 <% end %>
 
+<!-- FIXME: SQLチューニングして速くするの簡単じゃないかも？キャッシュかLazy Loadingを検討する -->
 <p><%= @tweets.total_count %> ツィート</p>
 
 <%= turbo_frame_tag "page_handler" %>
