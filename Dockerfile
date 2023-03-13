@@ -8,7 +8,7 @@ ENV RAILS_LOG_TO_STDOUT="1"
 
 RUN apt-get -y update && \
     apt-get -y upgrade && \
-    apt-get -y install libpq5 libvips42 build-essential libpq-dev git curl python3-pip && \
+    apt-get -y install libpq5 libvips42 build-essential libpq-dev git curl python3-pip postgresql-client && \
     apt-get clean
 
 # install nodejs
