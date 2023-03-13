@@ -24,6 +24,7 @@ class Tweet < ApplicationRecord
   #
   # スレミオ分類
   # FIXME: Concernにくくりだすのがいいかも？
+  # FIXME: Solargraphが定数を拾ってこれないのでうまみがない. ベタ書きしたほうがいいかも
   module Classification
     [
       :SULETTA,  # スレッタ単体
@@ -82,8 +83,14 @@ class Tweet < ApplicationRecord
 
   belongs_to :user, optional: true
   has_many :classify_results, dependent: :destroy
+  has_many :sulemio_by_ml_classify_results,
+           -> { where(by_ml: true, classification: Classification::SULEMIO, result: true) },
+           class_name: 'ClassifyResult'
+  has_many :by_user_classify_results,
+           -> { where(by_ml: false) },
+           class_name: 'ClassifyResult'
 
-  validates :t_id, uniqueness: true
+  validates :t_id, uniqueness: true, presence: true
 
   attribute :a_classification, :string # 元々あったclassificationのかわりに使う
   attribute :classified, default: false
@@ -111,7 +118,15 @@ class Tweet < ApplicationRecord
       .where(classify_results: { id: nil })
   }
   scope :pre_classified_with_sulemio_photo, lambda {
-    pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, true)
+    # FIXME: pre_classified_with_photo を使うようになおしたい
+    #pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, true)
+    preload(:classify_results)
+      .joins(:user)
+      .where(users: { protected: false })
+      .where(media_type: Tweet::MediaType::PHOTO)
+      .joins(:sulemio_by_ml_classify_results)
+      .left_outer_joins(:by_user_classify_results)
+      .where(by_user_classify_results: { tweet_id: nil })
   }
   scope :pre_classified_with_notsulemio_photo, lambda {
     pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, false)
