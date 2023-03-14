@@ -214,6 +214,7 @@ class Tweet < ApplicationRecord
       tweet.raw_json = tweet_hash.to_json
       tweet.media_type = media_type
       tweet.first_media_url = first_media_url
+      tweet.original_created_at = tweet_hash[:created_at]
       tweet.user = user
       tweet.save! # 保存に失敗したら例外を投げる
       tweet
