@@ -214,6 +214,7 @@ class Tweet < ApplicationRecord
       tweet.raw_json = tweet_hash.to_json
       tweet.media_type = media_type
       tweet.first_media_url = first_media_url
+      tweet.original_created_at = tweet_hash[:created_at]
       tweet.user = user
       tweet.save! # 保存に失敗したら例外を投げる
       tweet
@@ -266,6 +267,27 @@ class Tweet < ApplicationRecord
   scope :classified_without_classify_result, lambda {
     left_outer_joins(:classify_results).where(classified: true, classify_results: { id: nil })
   }
+
+  # データ移行用
+  #   - original_created_at が nil のツィートを検索する
+  #   - raw_json に created_at が存在していれば, original_created_at に raw_json の created_at をセットする
+  def self.bulk_update_original_created_at_from_raw_json(limit = 1, offset = 0)
+    #while page = Tweet.where(original_created_at: nil).limit(limit).page(1)
+    tweets = Tweet.where(original_created_at: nil).order(id: :asc).limit(limit).offset(offset)
+    tweets.each do |t|
+      t.update_original_created_at_from_raw_json
+    end
+    return nil
+  end
+
+  def update_original_created_at_from_raw_json
+    Rails.logger.info "id: #{id}"
+    json = JSON.parse(raw_json)
+    if json.is_a?(Hash) && json['created_at'].present?
+      self.original_created_at = json['created_at']
+      save!
+    end
+  end
 
   # 判別結果を保存する
   # @param [User] user 判別したユーザー（機械学習による判別の場合はnil）
