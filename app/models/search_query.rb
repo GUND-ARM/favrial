@@ -9,4 +9,5 @@
 #  updated_at       :datetime         not null
 #
 class SearchQuery < ApplicationRecord
+  validates :query, presence: true
 end
