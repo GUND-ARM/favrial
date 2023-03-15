@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_14_020918) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_15_155357) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,6 +35,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_14_020918) do
     t.string "refresh_token"
     t.bigint "user_id"
     t.index ["user_id"], name: "index_credentials_on_user_id"
+  end
+
+  create_table "search_queries", force: :cascade do |t|
+    t.string "query"
+    t.datetime "last_searched_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tweets", force: :cascade do |t|

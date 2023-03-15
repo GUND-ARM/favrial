@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  query: "#スレミオ"
+  last_searched_at: 2023-03-15 15:53:57
+
+two:
+  query: "#水星の魔女渋谷に現る"
+  last_searched_at: 2023-03-15 15:53:58
