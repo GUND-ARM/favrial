@@ -21,6 +21,8 @@ class User < ApplicationRecord
 
   validates :uid, presence: true, uniqueness: true
 
+  scope :with_credentials, -> { joins(:credential) }
+
   def self.find_or_create_from_auth_hash(auth_hash)
     h = ActiveSupport::HashWithIndifferentAccess.new(auth_hash)
     uid = h[:uid]
