@@ -2,18 +2,19 @@
 #
 # Table name: tweets
 #
-#  id              :bigint           not null, primary key
-#  t_id            :string
-#  body            :text
-#  url             :string
-#  raw_json        :text
-#  media_type      :string
-#  classification  :string
-#  classified      :boolean
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  first_media_url :string
-#  user_id         :bigint
+#  id                  :bigint           not null, primary key
+#  t_id                :string
+#  body                :text
+#  url                 :string
+#  raw_json            :text
+#  media_type          :string
+#  classification      :string
+#  classified          :boolean
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  first_media_url     :string
+#  user_id             :bigint
+#  original_created_at :datetime
 #
 require "test_helper"
 
