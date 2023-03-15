@@ -221,6 +221,34 @@ class Tweet < ApplicationRecord
     end
   end
 
+  # 検索で見つかったツィートを保存する
+  # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
+  # @param [String] query ツィート検索クエリ
+  # @param [Integer] count 遡るページ数
+  def self.save_searched_tweets(access_user:, query:, count: 1)
+    pagination_token = nil
+    count.times do
+      _, pagination_token = save_searched_tweets_page(
+        access_user: access_user,
+        query: query,
+        pagination_token: pagination_token
+      )
+      break if pagination_token.nil?
+    end
+  end
+
+  # 検索で見つかったツィートを保存する（1ページ分）
+  # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
+  # @param [String] query ツィート検索クエリ
+  # @param [String] pagination_token 次のページを取得するためのトークン
+  def self.save_searched_tweets_page(access_user:, query:, pagination_token:)
+    token = access_user.credential.token
+    res = TwitterAPI::Client.tweets_search_recent(token, query, pagination_token)
+    tweets_response = TwitterAPI::TweetsResponse.new(res)
+    tweets = Tweet.create_many_from_api_response(tweets_response)
+    return tweets, tweets_response.next_token
+  end
+
   # ユーザーがnilのツィートを一括で更新する
   #
   # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー

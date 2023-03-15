@@ -30,6 +30,13 @@ module TwitterAPI
       new(token).users_timelines_reverse_chronological(uid, pagination_token)
     end
 
+    # @param [String] token アクセストークン
+    # @param [String] query 検索クエリ
+    # @param [String] pagination_token ページネーショントークン
+    def self.tweets_search_recent(token, query, pagination_token = nil)
+      new(token).tweets_search_recent(query, pagination_token)
+    end
+
     def self.api_access(credential:, path:, params: nil)
       return Client.new(credential.token).api_access(path: path, params: params)
     end
@@ -78,6 +85,16 @@ module TwitterAPI
       res = api_access(
         path: "/2/users/#{uid}/timelines/reverse_chronological",
         params: users_timelines_reverse_chronological_params(pagination_token)
+      )
+      return JSON.parse(res.body).deep_symbolize_keys
+    end
+
+    # @param [String] query 検索クエリ
+    # @param [String] pagination_token ページネーショントークン
+    def tweets_search_recent(query, pagination_token = nil)
+      res = api_access(
+        path: '/2/tweets/search/recent',
+        params: tweets_search_recent_params(query, pagination_token)
       )
       return JSON.parse(res.body).deep_symbolize_keys
     end
@@ -155,6 +172,14 @@ module TwitterAPI
 
     def users_timelines_reverse_chronological_params(pagination_token)
       params = tweet_params
+      if pagination_token
+        params['pagination_token'] = pagination_token
+      end
+      return params
+    end
+
+    def tweets_search_recent_params(query, pagination_token)
+      params = tweet_params.merge({ 'query' => query, 'max_results' => 100 })
       if pagination_token
         params['pagination_token'] = pagination_token
       end
