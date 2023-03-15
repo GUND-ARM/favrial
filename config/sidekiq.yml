@@ -1,10 +1,13 @@
 :schedule:
   refresh_credential:
-    every: '4m'
+    every: ['1m', first_in: '1m']
     class: RefreshCredentialJob
   fetch_timeline:
-    every: '15m'
+    every: ['15m', first_in: '3m']
     class: FetchTimelineJob
+  seach_tweets:
+    every: ['15m', first_in: '8m']
+    class: SearchTweetsJob
   predict:
     every: '1m'
     class: PredictJob
