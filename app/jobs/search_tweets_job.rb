@@ -33,6 +33,7 @@ class SearchTweetsJob < ApplicationJob
   def search(search_query:, page_count:)
     access_user = User.with_credentials.sample
     query = search_query.query
+    Rails.logger.info("Search for: #{query} by #{access_user.username}")
     Tweet.save_searched_tweets(access_user:, query: query, count: page_count)
     search_query.last_searched_at = DateTime.now
     search_query.save!
