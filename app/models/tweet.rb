@@ -2,18 +2,19 @@
 #
 # Table name: tweets
 #
-#  id              :bigint           not null, primary key
-#  t_id            :string
-#  body            :text
-#  url             :string
-#  raw_json        :text
-#  media_type      :string
-#  classification  :string
-#  classified      :boolean
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  first_media_url :string
-#  user_id         :bigint
+#  id                  :bigint           not null, primary key
+#  t_id                :string
+#  body                :text
+#  url                 :string
+#  raw_json            :text
+#  media_type          :string
+#  classification      :string
+#  classified          :boolean
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  first_media_url     :string
+#  user_id             :bigint
+#  original_created_at :datetime
 #
 class Tweet < ApplicationRecord
   # こんなかんじで定数の一覧がとれる
@@ -219,6 +220,36 @@ class Tweet < ApplicationRecord
       tweet.save! # 保存に失敗したら例外を投げる
       tweet
     end
+  end
+
+  # 検索で見つかったツィートを保存する
+  # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
+  # @param [String] query ツィート検索クエリ
+  # @param [Integer] count 遡るページ数
+  def self.save_searched_tweets(access_user:, query:, count: 1, pagination_token: nil)
+    next_token = pagination_token
+    count.times do
+      _, next_token = save_searched_tweets_page(
+        access_user: access_user,
+        query: query,
+        pagination_token: next_token
+      )
+      break if next_token.nil?
+    end
+
+    return next_token
+  end
+
+  # 検索で見つかったツィートを保存する（1ページ分）
+  # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
+  # @param [String] query ツィート検索クエリ
+  # @param [String] pagination_token 次のページを取得するためのトークン
+  def self.save_searched_tweets_page(access_user:, query:, pagination_token:)
+    token = access_user.credential.token
+    res = TwitterAPI::Client.tweets_search_recent(token, query, pagination_token)
+    tweets_response = TwitterAPI::TweetsResponse.new(res)
+    tweets = Tweet.create_many_from_api_response(tweets_response)
+    return tweets, tweets_response.next_token
   end
 
   # ユーザーがnilのツィートを一括で更新する

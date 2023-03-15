@@ -1,0 +1,18 @@
+# == Schema Information
+#
+# Table name: search_queries
+#
+#  id               :bigint           not null, primary key
+#  query            :string
+#  last_searched_at :datetime
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
+
+one:
+  query: "#スレミオ"
+  last_searched_at: 2023-03-15 15:53:57
+
+two:
+  query: "#水星の魔女渋谷に現る"
+  last_searched_at: 2023-03-15 15:53:58
