@@ -226,16 +226,18 @@ class Tweet < ApplicationRecord
   # @param [User] access_user Twitter APIにアクセスするのに使用するユーザー
   # @param [String] query ツィート検索クエリ
   # @param [Integer] count 遡るページ数
-  def self.save_searched_tweets(access_user:, query:, count: 1)
-    pagination_token = nil
+  def self.save_searched_tweets(access_user:, query:, count: 1, pagination_token: nil)
+    next_token = pagination_token
     count.times do
-      _, pagination_token = save_searched_tweets_page(
+      _, next_token = save_searched_tweets_page(
         access_user: access_user,
         query: query,
-        pagination_token: pagination_token
+        pagination_token: next_token
       )
-      break if pagination_token.nil?
+      break if next_token.nil?
     end
+
+    return next_token
   end
 
   # 検索で見つかったツィートを保存する（1ページ分）
