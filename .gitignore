@@ -39,5 +39,6 @@ secret.txt
 /.irb_history
 /.env
 /production.env
+/staging.env
 
 **/__pycache__/
