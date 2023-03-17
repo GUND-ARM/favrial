@@ -2,7 +2,7 @@
 
 set -eu
 
-. production.env
+. staging.env
 
 export SSH_HOST
 export COMPOSE_PROJECT_NAME
@@ -11,4 +11,4 @@ export SECRET_KEY_BASE
 export TWITTER_CLIENT_ID
 export TWITTER_CLIENT_SECRET
 
-./deploy.sh
+sh -x deploy.sh "$@"
