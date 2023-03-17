@@ -1,7 +1,7 @@
 class FetchTimelineJob < ApplicationJob
   queue_as :default
 
-  def perform(count = 10)
+  def perform(count = 3)
     User.joins(:credential).each do |user|
       Rails.logger.info("Fetching timeline for @#{user.username}")
       begin
