@@ -1,0 +1,20 @@
+{
+  "background_color": "#ffffff",
+  "description": "ふぁぼるわよ、私が、あんたを。",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "name": "Favrial",
+  "short_name": "Favrial",
+  "start_url": "/"
+}
