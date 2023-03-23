@@ -5,6 +5,8 @@ export default class extends Controller {
   static values = {
     url: String,
     scope: String,
+    startTime: String,
+    endTime: String,
     page: Number,
   };
 
@@ -38,6 +40,12 @@ export default class extends Controller {
     const url = new URL(this.urlValue, location.origin);
     if (this.scopeValue) {
       url.searchParams.set('scope', this.scopeValue);
+    }
+    if (this.startTimeValue) {
+      url.searchParams.set('start_time', this.startTimeValue);
+    }
+    if (this.endTimeValue) {
+      url.searchParams.set('end_time', this.endTimeValue);
     }
     url.searchParams.set('page', this.pageValue);
     

@@ -30,6 +30,8 @@
      data-action="scroll@document->pagination#scroll"
      data-pagination-url-value="<%= tweets_path %>"
      data-pagination-scope-value="<%= @scope %>"
+     data-pagination-start-time-value="<%= @start_time %>"
+     data-pagination-end-time-value="<%= @end_time %>"
      data-pagination-page-value="<%= @tweets.next_page %>" >
   <% @tweets.each do |tweet| %>
     <%= render tweet %>

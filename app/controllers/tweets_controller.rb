@@ -11,13 +11,18 @@ class TweetsController < ApplicationController
     @scope = params[:scope] || "pre_classified_with_sulemio_photo"
     # 判断モード(デフォルトはスレミオ)
     @dmode = params[:dmode] || "sulemio"
+    @start_time = params[:start_time]
+    @end_time = params[:end_time]
     @tweets = case @scope
               when "with_photo"
                 # 画像つきの全てのツィートを表示する
                 Tweet.with_photo.order(created_at: :desc).page(params[:page])
               when "classified_with_sulemio_photo"
                 # ユーザによるスレミオ判定済みの画像を表示する
-                Tweet.classified_with_sulemio_photo.order(created_at: :desc).page(params[:page])
+                Tweet.classified_with_sulemio_photo
+                     .by_date(@start_time, @end_time)
+                     .order(original_created_at: :desc)
+                     .page(params[:page])
               when "pre_classified_with_sulemio_photo"
                 # AI仮判断済みのスレミオ画像を表示する
                 Tweet.pre_classified_with_sulemio_photo.order(created_at: :desc).page(params[:page])
