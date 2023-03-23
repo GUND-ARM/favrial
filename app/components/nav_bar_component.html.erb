@@ -22,9 +22,14 @@
               分類済みのツィート
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/tweets?scope=classified_with_sulemio_photo">スレミオ&#x1f99d;&#x1f345;</a></li>
-              <!--<li><a class="dropdown-item" href="/tweets?classification=suletta">スレッタ&#x1f99d;</a></li>-->
-              <!--<li><a class="dropdown-item" href="/tweets?classification=miorine">ミオリネ&#x1f345;</a></li>-->
+              <%= link_to 'スレミオ🦝🍅（すべての期間）', tweets_path(scope: :classified_with_sulemio_photo), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（きょう）', sulemio_tweets_path_today, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（きのう）', sulemio_tweets_path_yesterday, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（おととい）', sulemio_tweets_path_day_before_yesterday, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（今週）', sulemio_tweets_path_this_week, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（先週）', sulemio_tweets_path_last_week, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（今月）', sulemio_tweets_path_this_month, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（先月）', sulemio_tweets_path_last_month, class: "dropdown-item" %>
             </ul>
           </li>
         <% end %>
