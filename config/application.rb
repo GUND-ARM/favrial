@@ -39,5 +39,8 @@ module App
         "1623388250793713664"  # @gundbit01
       ]
     end
+
+    # タイムゾーンの設定
+    config.time_zone = "Tokyo"
   end
 end
