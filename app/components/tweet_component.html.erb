@@ -4,8 +4,8 @@
     <%= image_tag @tweet.first_media_url, class: "card-img-top", style: "height: 300px; object-fit: cover;" %>
   <% end %>
   <div class="card-body d-flex flex-column">
-    <!-- FIXME: ユーザ名が取得できるようになったら表示する -->
-    <!-- <h5 class="card-title"><%= @name %></h5> -->
+    <h5 class="card-title"><%= @tweet.user.name %></h5>
+    <p class="card-text"><small class="text-muted"><%= @tweet.original_created_at.strftime("%Y/%m/%d %H:%M") %></small></p>
     <p class="card-text"><%= @tweet.body %></p>
 
     <div class="mt-auto">

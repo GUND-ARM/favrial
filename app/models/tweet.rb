@@ -96,7 +96,7 @@ class Tweet < ApplicationRecord
   attribute :a_classification, :string # 元々あったclassificationのかわりに使う
   attribute :classified, default: false
 
-  scope :unprotected, -> { preload(:classify_results).joins(:user).where(users: { protected: false }) }
+  scope :unprotected, -> { preload(:user).preload(:classify_results).joins(:user).where(users: { protected: false }) }
   scope :with_photo, lambda {
     unprotected.where(media_type: Tweet::MediaType::PHOTO)
   }
@@ -139,6 +139,20 @@ class Tweet < ApplicationRecord
     where(media_type: Tweet::MediaType::PHOTO)
       .left_outer_joins(:user)
       .where(users: { id: nil })
+  }
+  # FIXME: start_date, end_date をStringで受け取るべきなのか再検討する
+  # FIXME: テストを書く
+  scope :by_date, lambda { |start_date, end_date|
+    tweets = where.not(original_created_at: nil)
+    if start_date.present? && end_date.present?
+      tweets.where(original_created_at: DateTime.parse(start_date)..DateTime.parse(end_date))
+    elsif start_date.present?
+      tweets.where('original_created_at >= ?', DateTime.parse(start_date))
+    elsif end_date.present?
+      tweets.where('original_created_at <= ?', DateTime.parse(end_date))
+    else
+      tweets
+    end
   }
 
   before_save do
