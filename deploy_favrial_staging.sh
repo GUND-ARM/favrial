@@ -11,4 +11,4 @@ export SECRET_KEY_BASE
 export TWITTER_CLIENT_ID
 export TWITTER_CLIENT_SECRET
 
-sh -x deploy.sh "$@"
+sh deploy.sh "$@"

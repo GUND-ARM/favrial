@@ -100,10 +100,10 @@ class Tweet < ApplicationRecord
   scope :with_photo, lambda {
     unprotected.where(media_type: Tweet::MediaType::PHOTO)
   }
-  scope :classified_with_photo, lambda { |classification|
+  scope :classified_with_photo, lambda { |classification, result|
     with_photo
       .joins(:classify_results)
-      .where(classify_results: { classification: classification, result: true, by_ml: false })
+      .where(classify_results: { classification: classification, result: result, by_ml: false })
   }
   scope :pre_classified_with_photo, lambda { |classification, result|
     subquery = with_photo
@@ -133,7 +133,10 @@ class Tweet < ApplicationRecord
     pre_classified_with_photo(ClassifyResult::Classification::SULEMIO, false)
   }
   scope :classified_with_sulemio_photo, lambda {
-    classified_with_photo(ClassifyResult::Classification::SULEMIO)
+    classified_with_photo(ClassifyResult::Classification::SULEMIO, true)
+  }
+  scope :classified_with_notsulemio_photo, lambda {
+    classified_with_photo(ClassifyResult::Classification::SULEMIO, false)
   }
   scope :with_photo_without_user, lambda {
     where(media_type: Tweet::MediaType::PHOTO)
