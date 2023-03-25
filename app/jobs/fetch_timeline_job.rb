@@ -13,6 +13,12 @@ class FetchTimelineJob < ApplicationJob
     end
 
     users = User.joins(:credential)
-    User.bulk_update_new_users(access_user: users[rand(users.count)])
+    access_user = users[rand(users.count)]
+    begin
+      User.bulk_update_new_users(access_user: access_user)
+    rescue => e
+      Rails.logger.error("Error fetching users by @#{access_user.username}: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
+    end
   end
 end
