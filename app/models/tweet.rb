@@ -198,6 +198,28 @@ class Tweet < ApplicationRecord
     return ratio >= 0.5
   end
 
+  def media_keys
+    if raw_json
+      h = JSON.parse(raw_json).deep_symbolize_keys
+      if h.key?(:attachments)
+        attachments = h[:attachments]
+        if attachments.key?(:media_keys)
+          return attachments[:media_keys]
+        end
+      end
+    end
+    return nil
+  end
+
+  def media_count
+    keys = media_keys
+    if keys
+      return keys.count
+    else
+      return 0
+    end
+  end
+
   # api_response is a hash
   def self.create_many_from_api_response(tweets_response)
     tweets = tweets_response.bare_tweets

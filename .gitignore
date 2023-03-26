@@ -42,3 +42,5 @@ secret.txt
 /staging.env
 
 **/__pycache__/
+
+/train_data
