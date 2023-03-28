@@ -54,14 +54,30 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     image_url = request.args.get("image_url")
-    image = Image.open(io.BytesIO(requests.get(image_url).content)).convert("RGB")
-    index, score = predict(model, image)
-    class_name = class_names[index][2:].strip()
-    data = {
-            "class_name": class_name,
-            "score": float(score)
-    }
-    return jsonify(data)
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        #image = Image.open(io.BytesIO(requests.get(image_url).content)).convert("RGB")
+        image = Image.open(io.BytesIO(response.content)).convert("RGB")
+        index, score = predict(model, image)
+        class_name = class_names[index][2:].strip()
+        data = {
+                "status": "ok",
+                "class_name": class_name,
+                "score": float(score)
+                }
+        return jsonify(data), 200
+    elif response.status_code == 404:
+        data = {
+                "status": "error",
+                "message": "image not found"
+                }
+        return jsonify(data), 422
+    else:
+        data = {
+                "status": "error",
+                "message": "invalid image url"
+                }
+        return jsonify(data), 422
 
 # メモリリーク検証用
 #@app.route('/tm')
