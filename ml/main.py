@@ -56,7 +56,6 @@ def index():
     image_url = request.args.get("image_url")
     response = requests.get(image_url)
     if response.status_code == 200:
-        #image = Image.open(io.BytesIO(requests.get(image_url).content)).convert("RGB")
         image = Image.open(io.BytesIO(response.content)).convert("RGB")
         index, score = predict(model, image)
         class_name = class_names[index][2:].strip()
