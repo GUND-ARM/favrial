@@ -31,3 +31,4 @@
 /config/credentials/production.key
 
 /train_data
+/.irb_history

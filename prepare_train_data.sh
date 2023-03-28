@@ -1,7 +1,8 @@
 #!/bin/sh
 
+test_data_count=100
+
 set -eu
-set -x
 
 . production.env
 #. staging.env
@@ -46,6 +47,6 @@ cat train_data/notsulemio.txt | xargs -IXXX curl --remote-name --output-dir trai
 # 0バイトのファイルを削除
 find train_data -type f -empty -delete
 
-# train から30件ずつ test に移動
-find train_data/sulemio/train -type f | head -n 30 | xargs -IXXX mv XXX train_data/sulemio/test
-find train_data/notsulemio/train -type f | head -n 30 | xargs -IXXX mv XXX train_data/notsulemio/test
+# train から test_data_count 件ずつ test に移動
+find train_data/sulemio/train -type f | head -n "${test_data_count}" | xargs -IXXX mv XXX train_data/sulemio/test
+find train_data/notsulemio/train -type f | head -n "${test_data_count}" | xargs -IXXX mv XXX train_data/notsulemio/test
