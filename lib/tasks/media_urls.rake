@@ -1,4 +1,7 @@
-LINE_LIMIT = 10000
+LINE_LIMIT = ENV.fetch('MEDIA_URLS_LINE_LIMIT', 10000).to_i
+
+# LINE_LIMIT を標準エラー出力に出す
+warn "LINE_LIMIT: #{LINE_LIMIT}"
 
 namespace :media_urls do
   task :sulemio => :environment do
