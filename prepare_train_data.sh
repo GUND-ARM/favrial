@@ -1,5 +1,6 @@
 #!/bin/sh
 
+line_limit=10000
 test_data_count=100
 
 set -eu
@@ -37,12 +38,13 @@ mkdir train_data/notsulemio/train
 mkdir train_data/notsulemio/test
 
 # 画像URLの一覧を取得
-docker_compose run --rm web rails media_urls:sulemio > train_data/sulemio.txt
-docker_compose run --rm web rails media_urls:notsulemio > train_data/notsulemio.txt
+docker_compose run -e MEDIA_URLS_LINE_LIMIT="${line_limit}" --rm web rails media_urls:sulemio > train_data/sulemio.txt
+docker_compose run -e MEDIA_URLS_LINE_LIMIT="${line_limit}" --rm web rails media_urls:notsulemio > train_data/notsulemio.txt
 
 # 画像URLの一覧から画像をダウンロード
-cat train_data/sulemio.txt | xargs -IXXX curl --remote-name --output-dir train_data/sulemio/train XXX
-cat train_data/notsulemio.txt | xargs -IXXX curl --remote-name --output-dir train_data/notsulemio/train XXX
+cat train_data/sulemio.txt | xargs -IXXX curl --remote-name --output-dir train_data/sulemio/train XXX &
+cat train_data/notsulemio.txt | xargs -IXXX curl --remote-name --output-dir train_data/notsulemio/train XXX &
+wait
 
 # 0バイトのファイルを削除
 find train_data -type f -empty -delete
