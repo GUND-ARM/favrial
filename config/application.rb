@@ -26,9 +26,9 @@ module App
     config.active_job.queue_adapter = :sidekiq
 
     # 公開リリースか？
-    config.public_release = false
+    config.public_release = true
 
-    # ログインを許可するTwitterユーザIDの一覧
+    # βリリース状態でログインを許可するTwitterユーザIDの一覧
     unless config.public_release
       config.beta_user_uids = [
         "1585913733750042624",
