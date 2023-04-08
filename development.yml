@@ -26,3 +26,13 @@ services:
     command: yarn build:css --watch
     tty: true
     <<: *rails_common
+  test_ml_model:
+    profiles:
+      - test_ml_model
+    command: python3 ml/test_ml_model.py
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./train_data
+        target: /opt/app/train_data
+    <<: *rails_common
