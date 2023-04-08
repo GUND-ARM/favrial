@@ -25,6 +25,12 @@
 docker attach docker attach favrial-web-1
 ```
 
+分類モデルのテスト
+
+```sh
+./docker_compose run --rm -it test_ml_model
+```
+
 ## バックアップ
 
 ```sh
