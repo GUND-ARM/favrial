@@ -21,7 +21,10 @@
 <% end %>
 
 <!-- FIXME: SQLチューニングして速くするの簡単じゃないかも？キャッシュかLazy Loadingを検討する -->
-<p><%= @tweets.total_count %> ツィート</p>
+<!-- FIXME: countがスロークエリなのを簡単に解決できそうにないので, いちばん遅いうえにあまり意味のないscopeでcountしないようにしてる -->
+<% unless @scope == "pre_classified_with_sulemio_photo" %>
+  <p><%= @tweets.total_count %> ツィート</p>
+<% end %>
 
 <%= turbo_frame_tag "page_handler" %>
 <div id="tweets"
