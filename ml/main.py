@@ -1,9 +1,12 @@
 import io
 import requests
-from keras.models import load_model  # TensorFlow is required for Keras to work
-from PIL import Image, ImageOps  # Install pillow instead of PIL
+from keras.models import load_model
+from PIL import Image, ImageOps
 import numpy as np
+import tensorflow as tf
 from flask import Flask, jsonify, request
+
+THRESHOLD = 0.5
 
 # メモリリーク検証用
 #import sys
@@ -12,36 +15,32 @@ from flask import Flask, jsonify, request
 # メモリリーク検証用
 #tracemalloc.start()
 
+def preprocess_image(img, target_size=(224, 224)):
+    # 画像を読み込む
+    img = img.resize(target_size)
+    img_array = np.array(img)
+
+    # 画像を前処理する
+    img_array = img_array[np.newaxis, ...]
+
+    return img_array
+
 def predict(model, image):
-    # Disable scientific notation for clarity
-    np.set_printoptions(suppress=True)
+    image_array = preprocess_image(image)
 
-    # Create the array of the right shape to feed into the keras model
-    # The 'length' or number of images you can put into the array is
-    # determined by the first position in the shape tuple, in this case 1
-    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+    # 予測を行う
+    predictions = model.predict(image_array)
+    predictions = predictions.flatten()
+    predictions = tf.nn.sigmoid(predictions)
 
-    # resizing the image to be at least 224x224 and then cropping from the center
-    size = (224, 224)
-    image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+    score = predictions.numpy()[0]
 
-    # turn the image into a numpy array
-    image_array = np.asarray(image)
+    # 予測結果を0または1に変換
+    predictions = tf.where(predictions < THRESHOLD, 0, 1)
 
-    # Normalize the image
-    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
+    index = predictions.numpy()[0]
 
-    # Load the image into the array
-    data[0] = normalized_image_array
-
-    # Predicts the model
-    # FIXME: model.predict() だとメモリリークする. 対策したが完全ではない
-    #prediction = model.predict(data)
-    prediction = model(data)
-    index = np.argmax(prediction)
-    confidence_score = prediction[0][index]
-
-    return index, confidence_score
+    return index, score
 
 # Load the model
 model = load_model("./ml/keras_model.h5", compile=False)
