@@ -1,12 +1,14 @@
 class SessionsController < ApplicationController
   def create
     @user = User.find_or_create_from_auth_hash(auth_hash)
-    if allowed_user?(@user)
-      session[:user_id] = @user.id
-      redirect_to root_path
-    else
-      redirect_to root_path, status: :unauthorized, notice: "このアカウントではログインできません（現在βテスト参加者のみログインできます。βテストに参加希望される方は、@witchandtrophy までご連絡ください）"
-    end
+    #if allowed_user?(@user)
+    #  session[:user_id] = @user.id
+    #  redirect_to root_path
+    #else
+    #  redirect_to root_path, status: :unauthorized, notice: "このアカウントではログインできません（現在βテスト参加者のみログインできます。βテストに参加希望される方は、@witchandtrophy までご連絡ください）"
+    #end
+    session[:user_id] = @user.id
+    redirect_to root_path
   end
 
   def destroy
