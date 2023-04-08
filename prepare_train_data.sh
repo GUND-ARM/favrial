@@ -1,7 +1,6 @@
 #!/bin/sh
 
-line_limit=10000
-test_data_count=100
+line_limit=20000
 
 set -eu
 
@@ -28,27 +27,36 @@ docker_compose() {
   docker compose -f docker-compose.yml -f production.yml "$@"
 }
 
-rm -rf train_data
-mkdir train_data
-mkdir train_data/sulemio
-mkdir train_data/notsulemio
-mkdir train_data/sulemio/train
-mkdir train_data/sulemio/test
-mkdir train_data/notsulemio/train
-mkdir train_data/notsulemio/test
+# 現在の日時を取得
+timestamp=$(date '+%Y%m%d%H%M%S')
+
+mkdir -p train_data/sulemio
+mkdir -p train_data/notsulemio
 
 # 画像URLの一覧を取得
 docker_compose run -e MEDIA_URLS_LINE_LIMIT="${line_limit}" --rm web rails media_urls:sulemio > train_data/sulemio.txt
 docker_compose run -e MEDIA_URLS_LINE_LIMIT="${line_limit}" --rm web rails media_urls:notsulemio > train_data/notsulemio.txt
 
 # 画像URLの一覧から画像をダウンロード
-cat train_data/sulemio.txt | xargs -IXXX curl --remote-name --output-dir train_data/sulemio/train XXX &
-cat train_data/notsulemio.txt | xargs -IXXX curl --remote-name --output-dir train_data/notsulemio/train XXX &
-wait
+cat train_data/sulemio.txt | while read -r l; do
+  file="$(echo "${l}" | awk -F '/' '{print $NF}')"
+  if test -f train_data/sulemio/"${file}"; then
+    echo "${file} exits. skip."
+  else
+    curl --remote-name --output-dir train_data/sulemio "${l}"
+  fi
+done
+cat train_data/notsulemio.txt | while read -r l; do
+  file="$(echo "${l}" | awk -F '/' '{print $NF}')"
+  if test -f train_data/notsulemio/"${file}"; then
+    echo "${file} exits. skip."
+  else
+    curl --remote-name --output-dir train_data/notsulemio "${l}"
+  fi
+done
 
 # 0バイトのファイルを削除
 find train_data -type f -empty -delete
 
-# train から test_data_count 件ずつ test に移動
-find train_data/sulemio/train -type f | head -n "${test_data_count}" | xargs -IXXX mv XXX train_data/sulemio/test
-find train_data/notsulemio/train -type f | head -n "${test_data_count}" | xargs -IXXX mv XXX train_data/notsulemio/test
+# train_data をtgzに圧縮
+tar -czvf "train_data-${timestamp}.tgz" train_data
