@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_15_155357) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_08_171234) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_15_155357) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["by_ml", "classification", "result", "tweet_id"], name: "index_classify_results_on_by_ml_classification_result_tweet_id"
     t.index ["tweet_id"], name: "index_classify_results_on_tweet_id"
     t.index ["user_id"], name: "index_classify_results_on_user_id"
   end
@@ -58,6 +59,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_15_155357) do
     t.bigint "user_id"
     t.datetime "original_created_at"
     t.index ["created_at"], name: "index_tweets_on_created_at"
+    t.index ["media_type"], name: "index_tweets_on_media_type"
     t.index ["original_created_at"], name: "index_tweets_on_original_created_at"
     t.index ["t_id"], name: "index_tweets_on_t_id", unique: true
     t.index ["user_id"], name: "index_tweets_on_user_id"
@@ -74,6 +76,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_15_155357) do
     t.string "url"
     t.string "description"
     t.string "profile_image_url"
+    t.index ["protected"], name: "index_users_on_protected"
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
