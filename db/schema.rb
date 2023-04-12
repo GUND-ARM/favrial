@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_08_171234) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_11_201125) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,6 +58,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_08_171234) do
     t.string "first_media_url"
     t.bigint "user_id"
     t.datetime "original_created_at"
+    t.integer "failed_prediction_count"
     t.index ["created_at"], name: "index_tweets_on_created_at"
     t.index ["media_type"], name: "index_tweets_on_media_type"
     t.index ["original_created_at"], name: "index_tweets_on_original_created_at"
