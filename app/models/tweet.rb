@@ -1,3 +1,5 @@
+require 'open-uri'
+
 # == Schema Information
 #
 # Table name: tweets
@@ -393,27 +395,71 @@ class Tweet < ApplicationRecord
     classify(user: user, classification: Classification::SULEMIO, result: result, by_ml: false)
   end
 
+  # 全てのAIによる判別結果を削除する
+  def self.reset_predictions
+    ClassifyResult.where(by_ml: true).destroy_all
+  end
+
   # MLサービスを呼び出して判別結果を保存する
+  # @return [String] 判別結果
   def predict
-    require 'open-uri'
-    return unless media_type == MediaType::PHOTO
-    return if classify_results.exists?(by_ml: true)
-    return if first_media_url.nil?
-    return if first_media_url.empty?
+    logger.info "predicts tweet id: #{id}"
+
+    unless predictable?
+      increment_failed_prediction_count
+      return false
+    end
 
     # MLサービスにリクエストを投げる
-    response = URI.open("http://ml:5080/?image_url=#{first_media_url}")
-    return unless response.status[0] == "200"
+    begin
+      response = URI.open("http://ml:5080/?image_url=#{first_media_url}")
+    rescue OpenURI::HTTPError => e
+      logger.error("ML service returned error for id: #{id}, #{e.class}: #{e.message}")
+      increment_failed_prediction_count
+      return false
+    rescue SocketError => e
+      # MLサービスが起動していない場合は failed_prediction_count をインクリメントしない
+      logger.error("ML service not responding id: #{id}, #{e.class}: #{e.message}")
+      return false
+    end
 
     # レスポンスをパースする
     response_hash = JSON.parse(response.read.chomp)
+    class_name = response_hash['class_name']
 
     # 判別結果を保存する
-    case response_hash['class_name']
+    case class_name
     when 'SULEMIO'
+      logger.info "classify as SULEMIO: #{id}"
       classify_sulemio_by_ml(result: true)
     when 'NOTSULEMIO'
+      logger.info "classify as NOTSULEMIO: #{id}"
       classify_sulemio_by_ml(result: false)
     end
+
+    return true
+  end
+
+  def increment_failed_prediction_count
+    failed_prediction_count.nil? ? self.failed_prediction_count = 1 : self.failed_prediction_count += 1
+    save!
+  end
+
+  def predictable?
+    if media_type != MediaType::PHOTO
+      logger.info "media_type is not photo: #{media_type}"
+      return false
+    elsif classify_results.exists?(by_ml: true)
+      logger.info "already predicted: #{id}"
+      return false
+    elsif first_media_url.nil?
+      logger.info "first_media_url is nil: #{id}"
+      return false
+    elsif first_media_url.empty?
+      logger.info "first_media_url is empty: #{id}"
+      return false
+    end
+
+    return true
   end
 end
