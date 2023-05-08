@@ -24,7 +24,8 @@ docker_compose() {
 set +u
 import=0
 create=0
-while getopts "i:c" opt; do
+noup=0
+while getopts "i:cn" opt; do
   case ${opt} in
     i)
       import=1
@@ -33,11 +34,15 @@ while getopts "i:c" opt; do
     c)
       create=1
       ;;
+    n)
+      noup=1
+      ;;
     \?)
       echo "Invalid option: $OPTARG" 1>&2
-      echo "Usage: $0 [-i <backup_file>] [-c]" 1>&2
-      echo "  -i <backup_file>  DBをインポートする" 1>&2
-      echo "  -c                DBを作成する" 1>&2
+      echo "Usage: $0 [-i <backup_file>] [-cn]" 1>&2
+      echo "  -i <backup_file>  DBをインポートする(-c と排他)" 1>&2
+      echo "  -c                DBを作成する(-i と排他)" 1>&2
+      echo "  -n                デプロイ後にdocker compose up しない" 1>&2
       exit 1
       ;;
   esac
@@ -58,4 +63,6 @@ elif [ "${create}" -eq 1 ]; then
   docker_compose run --rm web rails db:create
 fi
 docker_compose run --rm web rails db:migrate
-docker_compose up -d --remove-orphans
+if [ "${noup}" -eq 0 ]; then
+  docker_compose up -d --remove-orphans
+fi
