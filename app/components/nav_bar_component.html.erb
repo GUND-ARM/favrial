@@ -12,9 +12,17 @@
               未分類のツィート
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="/tweets?scope=pre_classified_with_sulemio_photo&dmode=sulemio">AIによる仮分類済(スレミオだ, スレミオ判断モード)</a></li>
-              <li><a class="dropdown-item" href="/tweets?scope=pre_classified_with_notsulemio_photo&dmode=sulemio">AIによる仮判断済(スレミオではない, スレミオ判断モード)</a></li>
-              <li><a class="dropdown-item" href="/tweets?scope=with_photo&dmode=sulemio">全ての画像(スレミオ判断モード)</a></li>
+              <li><a class="dropdown-item" href="/tweets?scope=pre_classified_with_sulemio_photo&dmode=sulemio">AIで仮分類済(スレミオ, スレミオ判断, 全期間)</a></li>
+              <li><a class="dropdown-item" href="/tweets?scope=pre_classified_with_notsulemio_photo&dmode=sulemio">AIで仮判断済(Notスレミオ, スレミオ判断, 全期間)</a></li>
+              <li><a class="dropdown-item" href="/tweets?scope=with_photo&dmode=sulemio">全ての画像(スレミオ判断, 全期間)</a></li>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2023/05)', pre_sulemio_tweets_path_by_year_month('2023-05'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2023/04)', pre_sulemio_tweets_path_by_year_month('2023-04'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2023/03)', pre_sulemio_tweets_path_by_year_month('2023-03'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2023/02)', pre_sulemio_tweets_path_by_year_month('2023-02'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2023/01)', pre_sulemio_tweets_path_by_year_month('2023-01'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2022/12)', pre_sulemio_tweets_path_by_year_month('2022-12'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2022/11)', pre_sulemio_tweets_path_by_year_month('2022-11'), class: "dropdown-item" %>
+              <%= link_to 'AIで仮分類済(スレミオ, スレミオ判断, 2022/10)', pre_sulemio_tweets_path_by_year_month('2022-10'), class: "dropdown-item" %>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -28,8 +36,14 @@
               <%= link_to 'スレミオ🦝🍅（おととい）', sulemio_tweets_path_day_before_yesterday, class: "dropdown-item" %>
               <%= link_to 'スレミオ🦝🍅（今週）', sulemio_tweets_path_this_week, class: "dropdown-item" %>
               <%= link_to 'スレミオ🦝🍅（先週）', sulemio_tweets_path_last_week, class: "dropdown-item" %>
-              <%= link_to 'スレミオ🦝🍅（今月）', sulemio_tweets_path_this_month, class: "dropdown-item" %>
-              <%= link_to 'スレミオ🦝🍅（先月）', sulemio_tweets_path_last_month, class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2023/05）', sulemio_tweets_path_by_year_month('2023-05'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2023/04）', sulemio_tweets_path_by_year_month('2023-04'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2023/03）', sulemio_tweets_path_by_year_month('2023-03'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2023/02）', sulemio_tweets_path_by_year_month('2023-02'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2023/01）', sulemio_tweets_path_by_year_month('2023-01'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2022/12）', sulemio_tweets_path_by_year_month('2022-12'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2022/11）', sulemio_tweets_path_by_year_month('2022-11'), class: "dropdown-item" %>
+              <%= link_to 'スレミオ🦝🍅（2022/10）', sulemio_tweets_path_by_year_month('2022-10'), class: "dropdown-item" %>
             </ul>
           </li>
         <% end %>
